@@ -14,6 +14,11 @@ float float_rand(float min,float max)
     return min + (float)rand()/(float)(RAND_MAX/(max-min));
 }
 
+int int_rand(int lower,int upper){
+     int num = (rand() %(upper - lower + 1)) + lower;
+     return num;
+}
+
 
 float * acceloremeter_sensor_x(){
     
@@ -40,8 +45,6 @@ float * acceloremeter_sensor_z(){
 }
 
 //THCP_Sensor
-
-
 
 float thcp_temp_sensor(){
     return floatrand(5,30);
