@@ -9,8 +9,7 @@
 
 // Acelerometro
 
-float float_rand(float min,float max)
-{
+float floatrand(float min, float max){
     return min + (float)rand()/(float)(RAND_MAX/(max-min));
 }
 
@@ -46,24 +45,29 @@ float * acceloremeter_sensor_z(){
 
 //THCP_Sensor
 
-float thcp_temp_sensor(){
-    return floatrand(5,30);
+char thcp_temp_sensor(){
+    char n = (char) 5 + (rand() % 26);
+    return n;
 }
 
-float thcp_hum_sensor(){
-   return floatrand(30,80);
+char thcp_hum_sensor(){
+    char n = (char) 30 + (rand() % 51);
+    return n;
 }
 
-float thcp_pres_sensor(){
-   return floatrand(1000,1200);
+char thcp_pres_sensor(){
+    char n = (char) 1000 + (rand() % 201);
+    return n;
 }
 
-float thcp_CO_sensor(){
-    return floatrand(30,200);
+char thcp_CO_sensor(){
+    char n = (char) 30 + (rand() % 171);
+    return n;
 }
 
-float batt_sensor() {
-    return floatrand(1,100);
+char batt_sensor() {
+    char n = (char) 1 + (rand() % 100);
+    return n;
 }
 
 
