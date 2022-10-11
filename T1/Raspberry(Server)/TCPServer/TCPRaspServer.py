@@ -1,4 +1,11 @@
+# importing the sys module
+import sys  
 import socket
+ 
+# appending the directory of mod.py
+# in the sys.path list
+sys.path.insert(1, '../Database') 
+import Desempaquetamiento
 
 def int_to_string_bytearray(a: int) -> bytearray:
     return f'{a:d}'.encode('utf-8').zfill(5)
@@ -9,7 +16,7 @@ def string_bytearray_to_int(b: bytearray) -> int:
 
 # "192.168.5.177"  # Standard loopback interface address (localhost)
 HOST = "localhost"#"localhost"
-PORT = 5000  # Port to listen on (non-privileged ports are > 1023)
+PORT = 5001  # Port to listen on (non-privileged ports are > 1023)
 
 s = socket.socket(socket.AF_INET, #internet
                   socket.SOCK_STREAM) #TCP
@@ -51,6 +58,7 @@ while True:
             break
         print(f"Recibido {data}")
         conn.send(data)
+        Desempaquetamiento.parseData(data)
 
     conn.close()
     print('Desconectado')
