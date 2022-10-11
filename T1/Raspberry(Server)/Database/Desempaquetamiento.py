@@ -37,19 +37,21 @@ def protUnpack(protocol:int, data):
     return unpack(protocol_unpack[protocol], data)
 
 def headerDict(data):
-    M1, M2, M3, M4, M5, M6, protocol, status, leng_msg = unpack("<6B2BH", data)
+    ID_Dev,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg = unpack("<2s6B2BH", data)
     MAC = ".".join([hex(x)[2:] for x in [M1, M2, M3, M4, M5, M6]])
-    return {"MAC":MAC, "protocol":protocol, "status":status, "length":leng_msg}
+    return {"MAC":MAC, "protocol":ID_protocol, "status":status, "length":leng_msg}
 
 def dataDict(protocol:int, data):
-    if protocol not in [0, 1, 2, 3, 4, 5]:
+    if protocol not in [0, 1, 2, 3, 4]:
         print("Error: protocol doesnt exist")
         return None
+    
     def protFunc(protocol, keys):
         def p(data):
             unp = protUnpack(protocol, data)
             return {key:val for (key,val) in zip(keys, unp)}
         return p
+
     p0 = ["OK"]
     p1 = ["Batt_level", "Timestamp"]
     p2 = ["Batt_level", "Timestamp", "Temp", "Pres", "Hum", "Co"]
