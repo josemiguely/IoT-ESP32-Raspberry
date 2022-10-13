@@ -32,26 +32,26 @@ while True:
             # print("message length = "+str(len(data)))
             # print("without decoding = "+ str(data[80:96]))
             # print("decoded = " + str(data[80:96].decode()))
-            # #print("number = " + str(int((data[80:96].decode()), 2)))
+            # print("number = " + str(int((data[80:96].decode()), 2)))
             # print(str(int(len(data)-96)//8))
 
-            # if len(data) >= 12*8 and int((data[80:96].decode()), 2) == int((len(data)-96)//8):
-            #     print("im in")
-            #     if (int(data[72:80],2) == 1):
-            #         print("ID Protocol: "+str(int(data[72:80],2)))
-            #         break
-            #     elif(int(data[72:80],2) == 2):
-            #         print("ID Protocol: " + str(int(data[72:80],2)))
-            #         break
-            #     elif (int(data[72:80],2) == 3):
-            #         print("ID Protocol: " + str(int(data[72:80],2)))
-            #         break
-            #     elif (int(data[72:80],2) == 4):
-            #         print("ID Protocol: " + str(int(data[72:80],2)))
-            #         break
-            # else:
-            #     print("error data length")
-            #     break
+            #if len(data) >= 12*8 and int((data[80:96].decode()), 2) == int((len(data)-96)//8):
+                 #print("im in")
+                 #if (int(data[72:80],2) == 1):
+                     #print("ID Protocol: "+str(int(data[72:80],2)))
+                     #break
+                 #elif(int(data[72:80],2) == 2):
+                     #print("ID Protocol: " + str(int(data[72:80],2)))
+                     #break
+                 #elif (int(data[72:80],2) == 3):
+                     #print("ID Protocol: " + str(int(data[72:80],2)))
+                     #break
+                 #elif (int(data[72:80],2) == 4):
+                     #print("ID Protocol: " + str(int(data[72:80],2)))
+                     #break
+            #else:
+                 #print("error data length")
+                 #break
             if data == b'':
                 break
         except ConnectionResetError:

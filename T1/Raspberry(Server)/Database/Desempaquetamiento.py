@@ -3,6 +3,8 @@ import traceback
 from DatabaseWork import * 
 
 # Documentación struct unpack,pack :https://docs.python.org/3/library/struct.html#
+
+## Corregir databaseWork.py con los nombres de dataDict
 '''
 Estas funciones se encargan de parsear y guardar los datos recibidos.
 Usamos struct para pasar de un array de bytes a una lista de numeros/strings. (https://docs.python.org/3/library/struct.html)
@@ -23,23 +25,25 @@ def response(change:bool=False, status:int=255, protocol:int=255):
     return pack("<BBBB", OK, CHANGE, status, protocol)
 
 def parseData(packet):
-    header = packet[:10]
-    data = packet[10:]
-    header = headerDict(header)
-    dataD = dataDict(header["protocol"], data)
+    header = packet[:12]
+    data = packet[12:]
+    headerD = headerDict(header)
+    dataD = dataDict(headerD["protocol"], data)
     if dataD is not None:
-        dataSave(header, dataD)
+        dataSave(headerD, dataD)
         
     return None if dataD is None else {**header, **dataD}
 
 def protUnpack(protocol:int, data):
-    protocol_unpack = ["<B", "<Bl", "<BlBfBf"]
+    # protocol_unpack = ["<B", "<Bl", "<BlBfBf"]
+    protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf6004f"]
     return unpack(protocol_unpack[protocol], data)
 
 def headerDict(data):
     ID_Dev,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg = unpack("<2s6B2BH", data)
     MAC = ".".join([hex(x)[2:] for x in [M1, M2, M3, M4, M5, M6]])
-    return {"MAC":MAC, "protocol":ID_protocol, "status":status, "length":leng_msg}
+    # return {"MAC":MAC, "protocol":ID_protocol, "status":status, "length":leng_msg}
+    return {"ID_Dev":ID_Dev,"MAC":MAC, "protocol":ID_protocol, "transport":TransportL, "length":leng_msg}
 
 def dataDict(protocol:int, data):
     if protocol not in [0, 1, 2, 3, 4]:

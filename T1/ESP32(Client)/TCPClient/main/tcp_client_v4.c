@@ -63,6 +63,12 @@ void tcp_client(void)
         ESP_LOGI(TAG, "Successfully connected");
 
         while (1) {
+
+            /* separar los mensajes en caso de ser mayores a el buffer del server */
+            /*generar el mensaje */
+            char protocol = '0' ;
+            char transportlayer= '0' ; // TCP = 0 ; UDP = 1;
+            payload = mensaje(protocol,transportlayer);
             int err = send(sock, payload, strlen(payload), 0);
             if (err < 0) {
                 ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);

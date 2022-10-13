@@ -9,7 +9,7 @@
 char* header(char protocol, char transportLayer){
 	char* head = malloc(12);
 
-    char ID = 'D1' // CAmbiar?
+    char * ID = "D1"; // WARNING
     memcpy((void*) &(head[0]), (void*) ID, 2);
 	uint8_t* MACaddrs = malloc(6);
 	esp_efuse_mac_get_default(MACaddrs);
@@ -40,22 +40,22 @@ char* mensaje (char protocol, char transportLayer){
 	char* hdr = header(protocol, transportLayer);
 	char* data;
 	switch (protocol) {
-		case 0:
+		case -1:
 			data = dataprotocol00();
 			break;
-		case 1:
+		case 0:
 			data = dataprotocol0();
 			break;
-		case 2:
+		case 1:
 			data = dataprotocol1();
 			break;
-		case 3:
+		case 2:
 			data = dataprotocol2();
 			break;
-        case 4:
+        case 3:
 			data = dataprotocol3();
 			break;
-        case 5:
+        case 4:
 			data = dataprotocol4();
 			break;
 		default:
@@ -85,8 +85,8 @@ char* dataprotocol0(){
 	msg[0] = '1'; // Val
 	msg[1] = batt;
 	
-    // long t = 0;
-    // memcpy((void*) &(msg[1]), (void*) &t, 4);
+    long t = 0;
+    memcpy((void*) &(msg[2]), (void*) &t, 4);
     return msg;
 }
 
@@ -98,88 +98,131 @@ char* dataprotocol1(){
     char batt = batt_sensor();
     msg[0] = '1'; // Val
     msg[1] = batt;
-
+    
+    int t = 0;
+    memcpy((void*) &(msg[2]), (void*) &t, 4);
+    
     char temp = thcp_temp_sensor();
-    msg[5] = temp;
+    msg[6] = temp;
 
-    // int t = 0;
-    // memcpy((void*) &(msg[1]), (void*) &t, 4);
+    float press = thcp_pres_sensor();
+    memcpy((void*) &(msg[7]), (void*) &press, 4);
+    
+    char hum = thcp_hum_sensor();
+    msg[11] = hum;
 
-    // char temp = thcp_temp_sensor();
-    // msg[5] = temp;
-
-    // float press = thcp_pres_sensor();
-    // memcpy((void*) &(msg[6]), (void*) &press, 4);
-
-    // char hum = thcp_hum_sensor();
-    // msg[10] = hum;
-
-    // char co = thcp_CO_sensor();
-    // memcpy((void*) &(msg[11]), (void*) &co, 4);
+    char co = thcp_CO_sensor();
+    memcpy((void*) &(msg[12]), (void*) &co, 4);
 
     return msg;
 }
 
 char* dataprotocol2(){
     
-    char* msg = malloc(dataLength(3));
+    char* msg = malloc(dataLength(2));
 
     char batt = batt_sensor();
-	msg[0] = '1';
+    msg[0] = '1'; // Val
     msg[1] = batt;
-
-
+    
     int t = 0;
-    memcpy((void*) &(msg[1]), (void*) &t, 4);
-
+    memcpy((void*) &(msg[2]), (void*) &t, 4);
+    
     char temp = thcp_temp_sensor();
-    msg[5] = temp;
+    msg[6] = temp;
 
     float press = thcp_pres_sensor();
-    memcpy((void*) &(msg[6]), (void*) &press, 4);
-
+    memcpy((void*) &(msg[7]), (void*) &press, 4);
+    
     char hum = thcp_hum_sensor();
-    msg[10] = hum;
+    msg[11] = hum;
 
     char co = thcp_CO_sensor();
-    memcpy((void*) &(msg[11]), (void*) &co, 4);
+    memcpy((void*) &(msg[12]), (void*) &co, 4);
 
-	float rms = rms();
-    memcpy((void*) &(msg[]), (void*) &rms, 4);
+    char rms = rms();
+    memcpy((void*) &(msg[16]), (void*) &rms, 4);
 
     return msg;
 }
 
 char* dataprotocol3() {
+       
+    char* msg = malloc(dataLength(3));
+
+    char batt = batt_sensor();
+    msg[0] = '1'; // Val
+    msg[1] = batt;
     
-    
-}
-
-'''
-char* dataprotocol1(){
-    
-    char* msg = malloc(dataLength(2));
-
-    float batt = batt_sensor();
-    msg[0] = batt;
-
-
     int t = 0;
-    memcpy((void*) &(msg[1]), (void*) &t, 4);
+    memcpy((void*) &(msg[2]), (void*) &t, 4);
+    
+    char temp = thcp_temp_sensor();
+    msg[6] = temp;
 
-    char temp = THPC_sensor_temp();
-    msg[5] = temp;
+    float press = thcp_pres_sensor();
+    memcpy((void*) &(msg[7]), (void*) &press, 4);
+    
+    char hum = thcp_hum_sensor();
+    msg[11] = hum;
 
+    char co = thcp_CO_sensor();
+    memcpy((void*) &(msg[12]), (void*) &co, 4);
 
-    float press = THPC_sensor_pres();
-    memcpy((void*) &(msg[6]), (void*) &press, 4);
+    char rms = rms();
+    memcpy((void*) &(msg[16]), (void*) &rms, 4);
 
-    char hum = THPC_sensor_hum();
-    msg[10] = hum;
+    float ampx = accelerometer_kpi_amp_x();
+    memcpy((void*) &(msg[20]), (void*) &ampx, 4);
 
-    float co = THPC_sensor_co();
-    memcpy((void*) &(msg[11]), (void*) &co, 4);
+    float frecx = accelerometer_kpi_frec_x();
+    memcpy((void*) &(msg[24]), (void*) &frecx, 4);
 
-    return msg;
+    float ampy = ampaccelerometer_kpi_amp_y();
+    memcpy((void*) &(msg[28]), (void*) &ampy, 4);
+
+    float frecy = accelerometer_kpi_frec_y();
+    memcpy((void*) &(msg[32]), (void*) &frecy, 4);
+
+    float ampz = accelerometer_kpi_amp_z();
+    memcpy((void*) &(msg[36]), (void*) &ampz, 4);
+
+    float frecz =accelerometer_kpi_frec_z();
+    memcpy((void*) &(msg[40]), (void*) &frecz, 4);
+
+    return msg; 
+    
 }
-'''
+char * dataprotocol4(){
+           
+    char* msg = malloc(dataLength(3));
+
+    char batt = batt_sensor();
+    msg[0] = '1'; // Val
+    msg[1] = batt;
+    
+    int t = 0;
+    memcpy((void*) &(msg[2]), (void*) &t, 4);
+    
+    char temp = thcp_temp_sensor();
+    msg[6] = temp;
+
+    float press = thcp_pres_sensor();
+    memcpy((void*) &(msg[7]), (void*) &press, 4);
+    
+    char hum = thcp_hum_sensor();
+    msg[11] = hum;
+
+    char co = thcp_CO_sensor();
+    memcpy((void*) &(msg[12]), (void*) &co, 4);
+
+    float * accx = acceloremeter_sensor_x();
+    memcpy((void*) &(msg[6412]), (void*) &accx, 6400);
+
+    float * accy = acceloremeter_sensor_y();
+    memcpy((void*) &(msg[12812]), (void*) &accy, 6400);
+
+    float * accz = acceloremeter_sensor_z();
+    memcpy((void*) &(msg[19212]), (void*) &accz, 6400);
+
+}
