@@ -1,9 +1,22 @@
-#include <sensors.c>
+#include "sensors.c"
 #include <math.h>
 #include <stdlib.h>
 #include "esp_system.h"
 #include "esp_mac.h"
 #include "esp_log.h"
+
+
+//Entrega el largo de la data según el protocolo
+
+unsigned short lengmsg[6] = {6, 16, 20, 44, 24016};
+
+unsigned short dataLength(char protocol){
+    return lengmsg[ (unsigned int) protocol]-1;
+}
+
+unsigned short messageLength(char protocol){
+    return 1+12+dataLength(protocol);
+}
 
 //Genera el header de un mensaje, con la MAC, el protocolo, status, y el largo del mensaje.
 char* header(char protocol, char transportLayer){
@@ -22,52 +35,7 @@ char* header(char protocol, char transportLayer){
 	return head;
 }
 
-unsigned short lengmsg[6] = {6, 16, 20, 44, 24016};
 
-//Entrega el largo de la data según el protocolo
-unsigned short dataLength(char protocol){
-    return lengmsg[ (unsigned int) protocol]-1;
-}
-
-unsigned short messageLength(char protocol){
-    return 1+12+dataLength(protocol);
-}
-
-
-char* mensaje (char protocol, char transportLayer){
-	char* mnsj = malloc(messageLength(protocol));
-	mnsj[messageLength(protocol)-1]= '\0';
-	char* hdr = header(protocol, transportLayer);
-	char* data;
-	switch (protocol) {
-		case -1:
-			data = dataprotocol00();
-			break;
-		case 0:
-			data = dataprotocol0();
-			break;
-		case 1:
-			data = dataprotocol1();
-			break;
-		case 2:
-			data = dataprotocol2();
-			break;
-        case 3:
-			data = dataprotocol3();
-			break;
-        case 4:
-			data = dataprotocol4();
-			break;
-		default:
-			data = dataprotocol0();
-			break;
-	}
-	memcpy((void*) mnsj, (void*) hdr, 12);
-	memcpy((void*) &(mnsj[12]), (void*) data, dataLength(protocol));
-	free(hdr);
-	free(data);
-	return mnsj;
-}
 
 // Arma un paquete para el protocolo de inicio, que busca solo respuesta
 char* dataprotocol00(){
@@ -99,7 +67,7 @@ char* dataprotocol1(){
     msg[0] = '1'; // Val
     msg[1] = batt;
     
-    int t = 0;
+    long t = 0;
     memcpy((void*) &(msg[2]), (void*) &t, 4);
     
     char temp = thcp_temp_sensor();
@@ -111,7 +79,7 @@ char* dataprotocol1(){
     char hum = thcp_hum_sensor();
     msg[11] = hum;
 
-    char co = thcp_CO_sensor();
+    float co = thcp_CO_sensor();
     memcpy((void*) &(msg[12]), (void*) &co, 4);
 
     return msg;
@@ -125,7 +93,7 @@ char* dataprotocol2(){
     msg[0] = '1'; // Val
     msg[1] = batt;
     
-    int t = 0;
+    long t = 0;
     memcpy((void*) &(msg[2]), (void*) &t, 4);
     
     char temp = thcp_temp_sensor();
@@ -137,11 +105,11 @@ char* dataprotocol2(){
     char hum = thcp_hum_sensor();
     msg[11] = hum;
 
-    char co = thcp_CO_sensor();
+    float co = thcp_CO_sensor();
     memcpy((void*) &(msg[12]), (void*) &co, 4);
 
-    char rms = rms();
-    memcpy((void*) &(msg[16]), (void*) &rms, 4);
+    float rms2 = rms();
+    memcpy((void*) &(msg[16]), (void*) &rms2, 4);
 
     return msg;
 }
@@ -154,7 +122,7 @@ char* dataprotocol3() {
     msg[0] = '1'; // Val
     msg[1] = batt;
     
-    int t = 0;
+    long t = 0;
     memcpy((void*) &(msg[2]), (void*) &t, 4);
     
     char temp = thcp_temp_sensor();
@@ -166,11 +134,11 @@ char* dataprotocol3() {
     char hum = thcp_hum_sensor();
     msg[11] = hum;
 
-    char co = thcp_CO_sensor();
+    float co = thcp_CO_sensor();
     memcpy((void*) &(msg[12]), (void*) &co, 4);
 
-    char rms = rms();
-    memcpy((void*) &(msg[16]), (void*) &rms, 4);
+    float rms2 = rms();
+    memcpy((void*) &(msg[16]), (void*) &rms2, 4);
 
     float ampx = accelerometer_kpi_amp_x();
     memcpy((void*) &(msg[20]), (void*) &ampx, 4);
@@ -178,7 +146,7 @@ char* dataprotocol3() {
     float frecx = accelerometer_kpi_frec_x();
     memcpy((void*) &(msg[24]), (void*) &frecx, 4);
 
-    float ampy = ampaccelerometer_kpi_amp_y();
+    float ampy = accelerometer_kpi_amp_y();
     memcpy((void*) &(msg[28]), (void*) &ampy, 4);
 
     float frecy = accelerometer_kpi_frec_y();
@@ -187,7 +155,7 @@ char* dataprotocol3() {
     float ampz = accelerometer_kpi_amp_z();
     memcpy((void*) &(msg[36]), (void*) &ampz, 4);
 
-    float frecz =accelerometer_kpi_frec_z();
+    float frecz = accelerometer_kpi_frec_z();
     memcpy((void*) &(msg[40]), (void*) &frecz, 4);
 
     return msg; 
@@ -201,7 +169,7 @@ char * dataprotocol4(){
     msg[0] = '1'; // Val
     msg[1] = batt;
     
-    int t = 0;
+    long t = 0;
     memcpy((void*) &(msg[2]), (void*) &t, 4);
     
     char temp = thcp_temp_sensor();
@@ -213,16 +181,53 @@ char * dataprotocol4(){
     char hum = thcp_hum_sensor();
     msg[11] = hum;
 
-    char co = thcp_CO_sensor();
+    float co = thcp_CO_sensor();
     memcpy((void*) &(msg[12]), (void*) &co, 4);
 
     float * accx = acceloremeter_sensor_x();
-    memcpy((void*) &(msg[6412]), (void*) &accx, 6400);
+    memcpy((void*) &(msg[16]), (void*) accx, 6400);
 
     float * accy = acceloremeter_sensor_y();
-    memcpy((void*) &(msg[12812]), (void*) &accy, 6400);
+    memcpy((void*) &(msg[6416]), (void*) accy, 6400);
 
     float * accz = acceloremeter_sensor_z();
-    memcpy((void*) &(msg[19212]), (void*) &accz, 6400);
+    memcpy((void*) &(msg[12816]), (void*) accz, 6400);
 
+    return msg;
+}
+
+
+char* mensaje (char protocol, char transportLayer){
+	char* mnsj = malloc(messageLength(protocol));
+	mnsj[messageLength(protocol)-1]= '\0';
+	char* hdr = header(protocol, transportLayer);
+	char* data;
+	switch (protocol) {
+		case 9:
+			data = dataprotocol00();
+			break;
+		case 0:
+			data = dataprotocol0();
+			break;
+		case 1:
+			data = dataprotocol1();
+			break;
+		case 2:
+			data = dataprotocol2();
+			break;
+        case 3:
+			data = dataprotocol3();
+			break;
+        case 4:
+			data = dataprotocol4();
+			break;
+		default:
+			data = dataprotocol0();
+			break;
+	}
+	memcpy((void*) mnsj, (void*) hdr, 12);
+	memcpy((void*) &(mnsj[12]), (void*) data, dataLength(protocol));
+	free(hdr);
+	free(data);
+	return mnsj;
 }

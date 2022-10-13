@@ -15,8 +15,8 @@ def string_bytearray_to_int(b: bytearray) -> int:
     return int(b.decode('utf-8'))
 
 # "192.168.5.177"  # Standard loopback interface address (localhost)
-HOST = "localhost"#"localhost"
-PORT = 5001  # Port to listen on (non-privileged ports are > 1023)
+HOST = "192.168.4.1"#"localhost"
+PORT = 10000  # Port to listen on (non-privileged ports are > 1023)
 
 s = socket.socket(socket.AF_INET, #internet
                   socket.SOCK_STREAM) #TCP

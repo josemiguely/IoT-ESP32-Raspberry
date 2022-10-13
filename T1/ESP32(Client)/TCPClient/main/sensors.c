@@ -20,7 +20,6 @@ int int_rand(int lower,int upper){
 
 
 float * acceloremeter_sensor_x(){
-    
     float* arr = malloc(1600 * sizeof(float));
     for(int i = 0; i < 1600;i++){
         arr[i] = 2*sin(2*3.14*0.000*i);
@@ -55,13 +54,13 @@ char thcp_hum_sensor(){
     return n;
 }
 
-char thcp_pres_sensor(){
-    char n = (char) 1000 + (rand() % 201);
+float thcp_pres_sensor(){
+    float n = floatrand(1000,1200);
     return n;
 }
 
-char thcp_CO_sensor(){
-    char n = (char) 30 + (rand() % 171);
+float thcp_CO_sensor(){
+    float n = floatrand(30,2000);
     return n;
 }
 
@@ -96,8 +95,8 @@ float accelerometer_kpi_frec_z() {
 }
 
 
-float rms(float a , float b, float c){
-    float sq = pow(a,2)+ pow(b,2)+pow(c,2);
+float rms(){
+    float sq = pow(accelerometer_kpi_amp_x(),2)+ pow(accelerometer_kpi_amp_y(),2)+pow(accelerometer_kpi_amp_z(),2);
     return pow(sq,0.5); 
 }
 
