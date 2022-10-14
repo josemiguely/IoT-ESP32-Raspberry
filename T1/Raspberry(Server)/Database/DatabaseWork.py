@@ -9,12 +9,33 @@ def dataSave(header, data):
     protocol=header["protocol"]
     
     if protocol=="0":
+        print("Entró 1313 en dataSave")
         # Tabla Datos
         try:
-            sqliteConnection = sql.connect('Db.sqlite') # nombre de la base de datos
+            sqliteConnection = sql.connect('DB.sqlite') # nombre de la base de datos
             cursor = sqliteConnection.cursos()
 
-            sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3) VALUES(?, ?, ?, ?, ?, ?, ?);"""
+            sqlite_insert_with_param = """INSERT INTO Datos (MessageId,
+    IdDevice,
+    MAC,
+    Timestamp,
+    Data1,
+    Data2,
+    Data3,
+    Data4,
+    Data5,
+    Data6,
+    Data7,
+    Data8,
+    Data9,
+    Data10,
+    Data11,
+    Data12,
+    Data13,
+    Data14,
+    Data15,
+    Data16,
+    Data17) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
             ## Poner la configuracion segun el parser
             data_tuple = (data[0], data[1], data[2], data[3]) # -> Corregir
             cursor.excecute(sqlite_insert_with_param, data_tuple)
@@ -29,7 +50,7 @@ def dataSave(header, data):
     elif protocol == "1":
     # Tabla Datos
         try:
-            sqliteConnection = sql.connect('Db.sqlite') # nombre de la base de datos
+            sqliteConnection = sql.connect('DB.sqlite') # nombre de la base de datos
             cursor = sqliteConnection.cursos()
 
             sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3, Data4, Data5, Data6, Data7) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
@@ -48,7 +69,7 @@ def dataSave(header, data):
     # elif protocol == "2":
     # Tabla Datos
         try:
-            sqliteConnection = sql.connect('Db.sqlite') # nombre de la base de datos
+            sqliteConnection = sql.connect('DB.sqlite') # nombre de la base de datos
             cursor = sqliteConnection.cursos()
 
             sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
@@ -66,7 +87,7 @@ def dataSave(header, data):
     elif protocol == "3":
     # Tabla Datos
         try:
-            sqliteConnection = sql.connect('Db.sqlite') # nombre de la base de datos
+            sqliteConnection = sql.connect('DB.sqlite') # nombre de la base de datos
             cursor = sqliteConnection.cursos()
 
             sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10, Data11, Data12, Data13, Data14) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
@@ -84,7 +105,7 @@ def dataSave(header, data):
     elif protocol == "4":
     # Tabla Datos
         try:
-            sqliteConnection = sql.connect('Db.sqlite') # nombre de la base de datos
+            sqliteConnection = sql.connect('DB.sqlite') # nombre de la base de datos
             cursor = sqliteConnection.cursos()
 
             sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10, Data11, Data12, Data13, Data14) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
@@ -102,7 +123,7 @@ def dataSave(header, data):
 
     # Tabla Logs (Para todos)
     try:
-        sqliteConnection = sql.connect('Db.sqlite')
+        sqliteConnection = sql.connect('DB.sqlite')
         cursor = sqliteConnection.cursor()
         
         sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data15, Data16, Data17) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""

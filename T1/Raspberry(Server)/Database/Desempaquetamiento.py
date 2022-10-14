@@ -40,7 +40,7 @@ def parseData(packet):
 def protUnpack(protocol:int, data):
     print(f"bytes in data = {len(data)}")
     # protocol_unpack = ["<B", "<Bl", "<BlBfBf"]
-    protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf6004f"]
+    protocol_unpack = ["<BBBBBB", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf6004f"]
     return unpack(protocol_unpack[protocol], data)
 
 def headerDict(data):

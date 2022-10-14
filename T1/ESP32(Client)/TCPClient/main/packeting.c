@@ -85,22 +85,22 @@ char* dataprotocol0(){
     char batt = batt_sensor();
     
 	msg[0] = '1'; // Val
-	msg[1] = batt;
+	msg[1] = batt+49;
 	//char* mascara = "AAAA";
     // long t = 0;
     // memcpy( (void*) &(msg[4]), (void*) &t, 4);
     //long t = 0L;
-    char* t[4];
+    //char* t[4];
 
-    memcpy( (void*) &(msg[2]), (void*) &t, 4);
-    
-    //long t = 0;
     //memcpy( (void*) &(msg[2]), (void*) &t, 4);
+    
+    long t = 0;
+    memcpy( (void*) &(msg[2]), (void*) &t, 4);
 
-    // msg[2] = '0';
-    // msg[3] = '0';
-    // msg[4] = '0';
-    // msg[5] = '0';
+     msg[2] = '0';
+     msg[3] = '0';
+     msg[4] = '0';
+     msg[5] = '0';
     
     
    
@@ -249,6 +249,12 @@ char * dataprotocol4(){
 
 
 char* mensaje (char protocol, char transportLayer){
+     time_t t;
+   
+   
+    /* Intializes random number generator */
+    srand((unsigned) time(&t));
+
 	ESP_LOGI(TAG2,"======= messageLength(protocol) = %i", messageLength(protocol));
     char* mnsj = malloc(messageLength(protocol));
 	mnsj[messageLength(protocol)-1]= '\0';

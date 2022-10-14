@@ -65,6 +65,8 @@ float thcp_CO_sensor(){
 }
 
 char batt_sensor() {
+   
+
     char n = (char) 1 + (rand() % 100);
     return n;
 }
