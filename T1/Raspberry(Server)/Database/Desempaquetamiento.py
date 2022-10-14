@@ -72,13 +72,15 @@ def dataDict(protocol, data):
             return {key:val for (key,val) in zip(keys, unp)}
         return p
 
-    p0 = ["OK"]
+    p0 = ["Val","Batt","Timestamp"]
     p1 = ["Batt_level", "Timestamp"]
     p2 = ["Batt_level", "Timestamp", "Temp", "Pres", "Hum", "Co"]
     p = [p0, p1, p2]
 
     try:
-        return protFunc(protocol, p[protocol])(data)
+        data_dict = protFunc(protocol, p[protocol])(data)
+        print(data_dict)
+        return data_dict
     except Exception:
         print("Data unpacking Error:", traceback.format_exc())
         return None

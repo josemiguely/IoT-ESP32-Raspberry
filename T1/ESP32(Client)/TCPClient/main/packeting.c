@@ -85,14 +85,22 @@ char* dataprotocol0(){
     char batt = batt_sensor();
     
 	msg[0] = '1'; // Val
-	msg[1] = '7';
-	
+	msg[1] = batt;
+	//char* mascara = "AAAA";
     // long t = 0;
-    // memcpy((void*) &(msg[2]), (void*) &t, 4);
-    msg[2] = '0';
-    msg[3] = '0';
-    msg[4] = '0';
-    msg[5] = '0';
+    // memcpy( (void*) &(msg[4]), (void*) &t, 4);
+    //long t = 0L;
+    char* t[4];
+
+    memcpy( (void*) &(msg[2]), (void*) &t, 4);
+    
+    //long t = 0;
+    //memcpy( (void*) &(msg[2]), (void*) &t, 4);
+
+    // msg[2] = '0';
+    // msg[3] = '0';
+    // msg[4] = '0';
+    // msg[5] = '0';
     
     
    
@@ -163,9 +171,11 @@ char* dataprotocol3() {
     msg[0] = '1'; // Val
     msg[1] = batt;
     
-    long t = 0;
-    memcpy((void*) &(msg[2]), (void*) &t, 4);
+    //long t = 0L;
+    //memcpy((void*) &(msg[2]), (void*) &t, 4);
     
+   
+
     char temp = thcp_temp_sensor();
     msg[6] = temp;
 
