@@ -28,7 +28,7 @@ while True:
     print(f'Conectado por alguien ({addr[0]}) desde el puerto {addr[1]}')
     while True:
         try:
-            data = conn.recv(24028*8)
+            data = conn.recv(1024)
             # print("message length = "+str(len(data)))
             # print("without decoding = "+ str(data[80:96]))
             # print("decoded = " + str(data[80:96].decode()))
@@ -56,10 +56,13 @@ while True:
                 break
         except ConnectionResetError:
             break
-        print(f"Recibido {data}")
+        print(f"Recibido {data.decode('latin1')}")
         conn.send(data)
-        Desempaquetamiento.parseData(data)
-
+        res=Desempaquetamiento.parseData(data)
+        if res==None:
+            break
+    
     conn.close()
     print('Desconectado')
+    break
 

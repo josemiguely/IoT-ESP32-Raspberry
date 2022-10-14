@@ -1,5 +1,6 @@
-from struct import unpack, pack
+from struct import unpack, pack, calcsize
 import traceback
+import sys
 from DatabaseWork import * 
 
 # Documentación struct unpack,pack :https://docs.python.org/3/library/struct.html#
@@ -25,9 +26,11 @@ def response(change:bool=False, status:int=255, protocol:int=255):
     return pack("<BBBB", OK, CHANGE, status, protocol)
 
 def parseData(packet):
+    print(f"packet length = {len(packet)}")
     header = packet[:12]
     data = packet[12:]
     headerD = headerDict(header)
+    print(headerD)
     dataD = dataDict(headerD["protocol"], data)
     if dataD is not None:
         dataSave(headerD, dataD)
@@ -35,18 +38,31 @@ def parseData(packet):
     return None if dataD is None else {**header, **dataD}
 
 def protUnpack(protocol:int, data):
+    print(f"bytes in data = {len(data)}")
     # protocol_unpack = ["<B", "<Bl", "<BlBfBf"]
     protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf6004f"]
     return unpack(protocol_unpack[protocol], data)
 
 def headerDict(data):
-    ID_Dev,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg = unpack("<2s6B2BH", data)
-    MAC = ".".join([hex(x)[2:] for x in [M1, M2, M3, M4, M5, M6]])
-    # return {"MAC":MAC, "protocol":ID_protocol, "status":status, "length":leng_msg}
-    return {"ID_Dev":ID_Dev,"MAC":MAC, "protocol":ID_protocol, "transport":TransportL, "length":leng_msg}
+    print(f"bytes in header = {len(data)}")
+    size=calcsize("<12B")
+    print(f"size of regex used= {size}")
+    # "<2s6B2BH"
+    # "<2s6BBB2B"
+    ID_Dev,ID_Dev1,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg,leng_msg2 = unpack("<12B", data)
 
-def dataDict(protocol:int, data):
-    if protocol not in [0, 1, 2, 3, 4]:
+    MAC = ".".join([hex(x)[2:] for x in [M1, M2, M3, M4, M5, M6]])
+    ID_protocol2=ID_protocol-48
+    TransportL2=TransportL-48
+    # return {"MAC":MAC, "protocol":ID_protocol, "status":status, "length":leng_msg}
+    return {"ID_Dev":ID_Dev,"MAC":MAC, "protocol":ID_protocol2, "transport":TransportL2, "length":leng_msg}
+
+def dataDict(protocol, data):
+    print(f" Llego el protocolo = {protocol}")
+    #protocol2 = protocol.encode('utf-8')
+    #print(f" Llego el protocolo2 = {protocol2}")
+    
+    if protocol not in [0,1,2,3,4]:
         print("Error: protocol doesnt exist")
         return None
     
