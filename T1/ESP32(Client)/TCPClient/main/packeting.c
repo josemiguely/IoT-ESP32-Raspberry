@@ -26,45 +26,26 @@ unsigned short messageLength(char protocol){
 char* header(char protocol, char transportLayer){
 	char* head = malloc(12);
     
-    head[0] = 'A';
-    head[1] = 'b';
-    // char * ID = "D1"; // WARNING
-    // memcpy((void*) &(head[0]), (void*) ID, 2);
-	uint8_t* MACaddrs = malloc(6); 
-    MACaddrs[0] = 'c';
-    MACaddrs[1] = 'd';
-    MACaddrs[2] = 'e';
-    MACaddrs[3] = 'f';
-    MACaddrs[4] = 'g';
-    MACaddrs[5] = 'h';
-	// esp_efuse_mac_get_default(MACaddrs);
-   
-    ESP_LOGI(TAG2,"//// MACaddrs: M1 = %x M2= %x M3= %x M4= %x M5= %x M6 = %x //////",
-    (unsigned char)MACaddrs[0],(unsigned char)MACaddrs[1],(unsigned char)MACaddrs[2],
-    (unsigned char)MACaddrs[3],(unsigned char)MACaddrs[4],(unsigned char)MACaddrs[5]);
-
-  
+    // head[0] = protocol;
+    // head[1] = transportLayer;
+    char * ID = "D1"; // WARNING
+    memcpy((void*) &(head[0]), (void*) ID, 2);
+	
+    uint8_t* MACaddrs = malloc(6); 
+    
+	esp_efuse_mac_get_default(MACaddrs);
+     
 	memcpy((void*) &(head[2]), (void*) MACaddrs, 6);
-    //head[8]= transportLayer;
-	//head[9]= protocol;
     head[8]= transportLayer;
 	head[9]= protocol;
    
 
 	unsigned short dataLen = dataLength(protocol);
-    ESP_LOGI(TAG2, "/////////LEN data = %i", sizeof(dataLen));
-	memcpy((void*) &(head[10]), (void*) &dataLen, 2);
-    head[10] = 'k';
-    head[11] = 'l';
-    
-    ESP_LOGI(TAG2, "/////////HEADER = %c,%c,%x,%x,%x,%x,%x,%x,%x,%x,%x,%x", head[0],head[1],head[2],head[3],head[4],head[5],head[6],head[7],head[8],
-    head[9],head[10],head[11]);
-
-    ESP_LOGI(TAG2, "/////////LEN HEADER = %i", sizeof(head));
-
-
-    
-    
+    unsigned char dataLenBytes[2];
+    dataLenBytes[0] = 48+dataLen;
+    dataLenBytes[1] = 48+(dataLen>>8);
+	memcpy((void*) &(head[10]), (void*) &dataLenBytes, 2);
+        
 	free(MACaddrs);
 	return head;
 }
@@ -85,25 +66,15 @@ char* dataprotocol0(){
     char batt = batt_sensor();
     
 	msg[0] = '1'; // Val
-	msg[1] = batt+49;
-	//char* mascara = "AAAA";
-    // long t = 0;
-    // memcpy( (void*) &(msg[4]), (void*) &t, 4);
-    //long t = 0L;
-    //char* t[4];
-
-    //memcpy( (void*) &(msg[2]), (void*) &t, 4);
+	msg[1] = batt+48;
+	   
+    char t[4];
     
-    long t = 0;
-    memcpy( (void*) &(msg[2]), (void*) &t, 4);
-
-     msg[2] = '0';
-     msg[3] = '0';
-     msg[4] = '0';
-     msg[5] = '0';
-    
-    
+    for(int i = 0; i<4 ; i++)
+       t[i] = '0';
    
+    memcpy( (void*) &(msg[2]), (void*) &t, 4);
+    
     return msg;
 }
 
