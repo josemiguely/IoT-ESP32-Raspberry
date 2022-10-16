@@ -7,6 +7,7 @@
 #include "esp_event.h"
 #include "esp_sleep.h"
 
+
 static const char *TAG2 = "example";
 
 //Entrega el largo de la data según el protocolo
@@ -41,10 +42,10 @@ char* header(char protocol, char transportLayer){
    
 
 	unsigned short dataLen = dataLength(protocol);
-    unsigned char dataLenBytes[2];
-    dataLenBytes[0] = 48+dataLen;
-    dataLenBytes[1] = 48+(dataLen>>8);
-	memcpy((void*) &(head[10]), (void*) &dataLenBytes, 2);
+    // unsigned char dataLenBytes[2];
+    // dataLenBytes[0] = 48+dataLen;
+    // dataLenBytes[1] = 48+(dataLen>>8);
+	memcpy((void*) &(head[10]), (void*) &dataLen, 2);
         
 	free(MACaddrs);
 	return head;
@@ -66,12 +67,14 @@ char* dataprotocol0(){
     char batt = batt_sensor();
     
 	msg[0] = '1'; // Val
-	msg[1] = batt+48;
+	msg[1] = batt;
 	   
-    char t[4];
+    // char t[4];
     
-    for(int i = 0; i<4 ; i++)
-       t[i] = '0';
+    // for(int i = 0; i<4 ; i++)
+    //    t[i] = '0';
+
+    long t=0;
    
     memcpy( (void*) &(msg[2]), (void*) &t, 4);
     
@@ -87,20 +90,35 @@ char* dataprotocol1(){
     msg[0] = '1'; // Val
     msg[1] = batt;
     
-    long t = 0;
-    memcpy((void*) &(msg[2]), (void*) &t, 4);
+    char t[4];
+    for(int i = 0; i<4 ; i++)
+       t[i] = '0';
+   
+    memcpy( (void*) &(msg[2]), (void*) &t, 4);
     
     char temp = thcp_temp_sensor();
     msg[6] = temp;
 
     float press = thcp_pres_sensor();
-    memcpy((void*) &(msg[7]), (void*) &press, 4);
+    unsigned char *pressBytes;
+    // pressBytes[0] = (int)press;
+    // pressBytes = (unsigned char*)&f;
+    // pressBytes[1] = 48+(press>>8);
+    // pressBytes[2] = 48+(press>>16);
+    // pressBytes[3] = 48+(press>>24);
     
-    char hum = thcp_hum_sensor();
-    msg[11] = hum;
+    // memcpy((void*) &(msg[7]), (void*) &pressBytes, 4);
+    
+    // char hum = thcp_hum_sensor();
+    // msg[11] = hum;
 
-    float co = thcp_CO_sensor();
-    memcpy((void*) &(msg[12]), (void*) &co, 4);
+    // float co = thcp_CO_sensor();
+    // unsigned char coBytes[4];
+    // coBytes[0] = 48+co;
+    // coBytes[1] = 48+(co>>8);
+    // coBytes[2] = 48+(co>>16);
+    // coBytes[3] = 48+(co>>24);
+    // memcpy((void*) &(msg[12]), (void*) &coBytes, 4);
 
     return msg;
 }
@@ -113,8 +131,11 @@ char* dataprotocol2(){
     msg[0] = '1'; // Val
     msg[1] = batt;
     
-    long t = 0;
-    memcpy((void*) &(msg[2]), (void*) &t, 4);
+    char t[4];
+    for(int i = 0; i<4 ; i++)
+       t[i] = '0';
+   
+    memcpy( (void*) &(msg[2]), (void*) &t, 4);
     
     char temp = thcp_temp_sensor();
     msg[6] = temp;

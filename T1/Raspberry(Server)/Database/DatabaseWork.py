@@ -1,10 +1,17 @@
 import json
 import sqlite3 as sql
 import os
-
+from datetime import datetime
 # Documentación https://docs.python.org/3/library/sqlite3.html
 
 ## Corregir los data tuple cuando se termine Desempaquetamiento.py
+# timestamp from now
+def tsNow():
+    d = datetime.now()
+    #print(d)
+    # timestamp in milliseconds
+    ts = d.timestamp()  
+    return ts
 
 def dataSave(header, data):
     protocol=header["protocol"]
@@ -27,28 +34,28 @@ def dataSave(header, data):
             INSERT INTO Datos (
             IdDevice,
             MAC,
+            Val,
+            Batt,
             Timestamp,
-            Data1,
-            Data2,
-            Data3,
-            Data4,
-            Data5,
-            Data6,
-            Data7,
-            Data8,
-            Data9,
-            Data10,
-            Data11,
-            Data12,
-            Data13,
-            Data14,
-            Data15,
-            Data16,
-            Data17) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+            Temp,
+            Press,
+            Hum,
+            Co,
+            RMS,
+            AmpX,
+            FrecX,
+            AmpY,
+            FrecY,
+            AmpZ,
+            FrecZ,
+            AccX,
+            AccY,
+            AccZ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
             ## Poner la configuracion segun el parser
             print("DATAAAAAA = ",end=" ")
             print(data)
-            data_tuple = (header["ID_Dev"], header["MAC"],data["Timestamp"],data["Val"], data["Batt"],data["Timestamp"], None, None, None, None, None, None, None, None, None, None, None, None, None, None) # -> Corregir
+            ts = tsNow()
+            data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, None, None, None, None, None, None, None, None, None, None, None, None, None, None) # -> Corregir
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
         except sql.Error as error:

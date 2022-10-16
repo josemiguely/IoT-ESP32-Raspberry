@@ -50,16 +50,17 @@ def headerDict(data):
     print(f"size of regex used= {size}")
     # "<2s6B2BH"
     # "<2s6BBB2B"
-    ID_Dev,ID_Dev1,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg,leng_msg2 = unpack("<12B", data)
+    # ID_Dev,ID_Dev1,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg,leng_msg2 = unpack("<12B", data)
+    ID_Dev,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg = unpack("<2s6BBBH", data)
     MAC = ".".join([hex(x)[2:] for x in [M1, M2, M3, M4, M5, M6]])
-    ID_Dev=chr(ID_Dev)+chr(ID_Dev1)
-    ID_protocol2=int(chr(ID_protocol))
-    TransportL2=int(chr(TransportL))
-    leng_msg=int(chr(leng_msg)) #Byte menos significativo
-    leng_msg2=int(chr(leng_msg2))<<8 #Byte más singifiactivo
-    leng_msg_res=leng_msg+leng_msg2
+    # ID_Dev=chr(ID_Dev)+chr(ID_Dev1)
+    # ID_protocol2=int(chr(ID_protocol))
+    # TransportL2=int(chr(TransportL))
+    # leng_msg=int(chr(leng_msg)) #Byte menos significativo
+    # leng_msg2=int(chr(leng_msg2))<<8 #Byte más singifiactivo
+    # leng_msg_res=leng_msg+leng_msg2
     # return {"MAC":MAC, "protocol":ID_protocol, "status":status, "length":leng_msg}
-    return {"ID_Dev":ID_Dev,"MAC":MAC, "protocol":ID_protocol2, "transport":TransportL2, "length":leng_msg_res}
+    return {"ID_Dev":ID_Dev,"MAC":MAC, "protocol":ID_protocol, "transport":TransportL, "length":leng_msg}
 
 def dataDict(protocol, data):
     print(f" Llego el protocolo = {protocol}")

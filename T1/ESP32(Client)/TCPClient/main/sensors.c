@@ -45,12 +45,12 @@ float * acceloremeter_sensor_z(){
 //THCP_Sensor
 
 char thcp_temp_sensor(){
-    char n = (char) 5 + (rand() % 26);
+    char n = (char) (5 + (rand() % 26));
     return n;
 }
 
 char thcp_hum_sensor(){
-    char n = (char) 30 + (rand() % 51);
+    char n = (char) (30 + (rand() % 51));
     return n;
 }
 
@@ -67,7 +67,7 @@ float thcp_CO_sensor(){
 char batt_sensor() {
    
 
-    char n = (char) 1 + (rand() % 100);
+    char n = (char) (1 + (rand() % 100));
     return n;
 }
 

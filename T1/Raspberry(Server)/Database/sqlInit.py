@@ -2,24 +2,24 @@ createDatos = '''CREATE TABLE Datos (
     MessageId INTEGER PRIMARY KEY,
     IdDevice INTEGER NOT NULL,
     MAC TEXT NOT NULL,
-    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Data1 INTEGER,
-    Data2 FLOAT,
-    Data3 FLOAT,
-    Data4 FLOAT,
-    Data5 FLOAT,
-    Data6 FLOAT,
-    Data7 FLOAT,
-    Data8 FLOAT,
-    Data9 FLOAT,
-    Data10 FLOAT,
-    Data11 FLOAT,
-    Data12 FLOAT,
-    Data13 FLOAT,
-    Data14 FLOAT,
-    Data15 FLOAT,
-    Data16 FLOAT,
-    Data17 FLOAT
+    Datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Val INTEGER,
+    Batt FLOAT,
+    Timestamp FLOAT,
+    Temp FLOAT,
+    Press FLOAT,
+    Hum FLOAT,
+    Co FLOAT,
+    RMS FLOAT,
+    AmpX FLOAT,
+    FrecX FLOAT,
+    AmpY FLOAT,
+    FrecY FLOAT,
+    AmpZ FLOAT,
+    FrecZ FLOAT,
+    AccX FLOAT,
+    AccY FLOAT,
+    AccZ FLOAT
 );'''
 
 createLogs = '''CREATE TABLE Logs (
@@ -27,7 +27,8 @@ createLogs = '''CREATE TABLE Logs (
     IdDevice INTEGER NOT NULL,
     Transport_Layer INTEGER NOT NULL,
     Protocol INTEGER NOT NULL,
-    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    Datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Timestamp FLOAT 
     
 );'''
 
