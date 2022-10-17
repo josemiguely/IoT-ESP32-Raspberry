@@ -32,35 +32,33 @@ def parseData(packet):
     headerD = headerDict(header)
     print(headerD)
     dataD = dataDict(headerD["protocol"], data)
-    if dataD is not None:
-        dataSave(headerD, dataD)
+    #if dataD is not None:
+    #    dataSave(headerD, dataD)
     #print(header, data)
-    return None if dataD is None else {**headerD, **dataD}
-    
+    #return None if dataD is None else {**headerD, **dataD}
+    return None if dataD is None else (headerD,dataD)
 
+    
 def protUnpack(protocol:int, data):
     print(f"bytes in data = {len(data)}")
+    
     # protocol_unpack = ["<B", "<Bl", "<BlBfBf"]
-    protocol_unpack = ["<BBBBBB", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf6004f"]
+    protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf1600f1600f1600f"]
+    print(f" protUnpack = size of regex used= {calcsize(protocol_unpack[protocol])}")
     return unpack(protocol_unpack[protocol], data)
 
 def headerDict(data):
     print(f"bytes in header = {len(data)}")
-    size=calcsize("<12B")
+    size=calcsize("<2s6BBBH")
     print(f"size of regex used= {size}")
     # "<2s6B2BH"
     # "<2s6BBB2B"
-    # ID_Dev,ID_Dev1,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg,leng_msg2 = unpack("<12B", data)
     ID_Dev,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg = unpack("<2s6BBBH", data)
+    ID_Dev = ID_Dev.decode('ascii')
     MAC = ".".join([hex(x)[2:] for x in [M1, M2, M3, M4, M5, M6]])
-    # ID_Dev=chr(ID_Dev)+chr(ID_Dev1)
-    # ID_protocol2=int(chr(ID_protocol))
-    # TransportL2=int(chr(TransportL))
-    # leng_msg=int(chr(leng_msg)) #Byte menos significativo
-    # leng_msg2=int(chr(leng_msg2))<<8 #Byte más singifiactivo
-    # leng_msg_res=leng_msg+leng_msg2
-    # return {"MAC":MAC, "protocol":ID_protocol, "status":status, "length":leng_msg}
-    return {"ID_Dev":ID_Dev,"MAC":MAC, "protocol":ID_protocol, "transport":TransportL, "length":leng_msg}
+    ID_protocol2=int(chr(ID_protocol))
+    TransportL2=int(chr(TransportL))
+    return {"ID_Dev":ID_Dev,"MAC":MAC, "protocol":ID_protocol2, "transport":TransportL2, "length":leng_msg}
 
 def dataDict(protocol, data):
     print(f" Llego el protocolo = {protocol}")
@@ -78,9 +76,11 @@ def dataDict(protocol, data):
         return p
 
     p0 = ["Val","Batt","Timestamp"]
-    p1 = ["Batt_level", "Timestamp"]
-    p2 = ["Batt_level", "Timestamp", "Temp", "Pres", "Hum", "Co"]
-    p = [p0, p1, p2]
+    p1 = ["Val","Batt","Timestamp","Temp","Press","Hum","Co"]
+    p2 = ["Val","Batt","Timestamp","Temp","Press","Hum","Co","RMS"]
+    p3 = ["Val","Batt","Timestamp","Temp","Press","Hum","Co","RMS","Ampx","Frecx","Ampy","Frecy","Ampz","Frecz"]
+    p4 = ["Val","Batt","Timestamp","Temp","Press","Hum","Co","Accx","Accy","Accz"]
+    p = [p0, p1, p2,p3,p4]
 
     try:
         data_dict = protFunc(protocol, p[protocol])(data)

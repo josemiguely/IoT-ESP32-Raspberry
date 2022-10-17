@@ -12,11 +12,14 @@ static const char *TAG2 = "example";
 
 //Entrega el largo de la data según el protocolo
 
-unsigned short lengmsg[6] = {6, 16, 20, 44, 24016};
+unsigned short lengmsg[6] = {6, 16, 20, 44, 19216};
 int loop;
 
 unsigned short dataLength(char protocol){
-    return lengmsg[ (unsigned int) protocol]-1;
+    unsigned int uprotocol =((unsigned int) protocol)-48;
+    ESP_LOGI(TAG2,"======= uprotocol = %i", uprotocol);
+
+    return lengmsg[uprotocol]-1;
 }
 
 unsigned short messageLength(char protocol){
@@ -27,9 +30,7 @@ unsigned short messageLength(char protocol){
 char* header(char protocol, char transportLayer){
 	char* head = malloc(12);
     
-    // head[0] = protocol;
-    // head[1] = transportLayer;
-    char * ID = "D1"; // WARNING
+    char * ID = "D1"; 
     memcpy((void*) &(head[0]), (void*) ID, 2);
 	
     uint8_t* MACaddrs = malloc(6); 
@@ -60,28 +61,23 @@ char* dataprotocol00(){
     return msg;
 }
 
-// Arma un paquete para el protocolo 0, con la bateria
+// Arma un paquete para el protocolo 0, 6 bytes
 char* dataprotocol0(){
     
     char* msg = malloc(dataLength(0));
     char batt = batt_sensor();
     
 	msg[0] = '1'; // Val
-	msg[1] = batt;
-	   
-    // char t[4];
-    
-    // for(int i = 0; i<4 ; i++)
-    //    t[i] = '0';
+	msg[1] = batt; //Battery
 
-    long t=0;
+    long t=0; //Timestamp
    
     memcpy( (void*) &(msg[2]), (void*) &t, 4);
     
     return msg;
 }
 
-
+// Arma un paquete para el protocolo 1, 16 bytes
 char* dataprotocol1(){
     
     char* msg = malloc(dataLength(1));
@@ -90,39 +86,26 @@ char* dataprotocol1(){
     msg[0] = '1'; // Val
     msg[1] = batt;
     
-    char t[4];
-    for(int i = 0; i<4 ; i++)
-       t[i] = '0';
+   long t=0; //Timestamp
    
     memcpy( (void*) &(msg[2]), (void*) &t, 4);
     
     char temp = thcp_temp_sensor();
     msg[6] = temp;
 
-    float press = thcp_pres_sensor();
-    unsigned char *pressBytes;
-    // pressBytes[0] = (int)press;
-    // pressBytes = (unsigned char*)&f;
-    // pressBytes[1] = 48+(press>>8);
-    // pressBytes[2] = 48+(press>>16);
-    // pressBytes[3] = 48+(press>>24);
+    float press = thcp_pres_sensor();    
+    memcpy((void*) &(msg[7]), (void*) &press, 4);
     
-    // memcpy((void*) &(msg[7]), (void*) &pressBytes, 4);
-    
-    // char hum = thcp_hum_sensor();
-    // msg[11] = hum;
+    char hum = thcp_hum_sensor();
+    msg[11] = hum;
 
-    // float co = thcp_CO_sensor();
-    // unsigned char coBytes[4];
-    // coBytes[0] = 48+co;
-    // coBytes[1] = 48+(co>>8);
-    // coBytes[2] = 48+(co>>16);
-    // coBytes[3] = 48+(co>>24);
-    // memcpy((void*) &(msg[12]), (void*) &coBytes, 4);
+    float co = thcp_CO_sensor();
+    memcpy((void*) &(msg[12]), (void*) &co, 4);
 
     return msg;
 }
 
+// Arma un paquete para el protocolo 2, 20 bytes
 char* dataprotocol2(){
     
     char* msg = malloc(dataLength(2));
@@ -131,9 +114,7 @@ char* dataprotocol2(){
     msg[0] = '1'; // Val
     msg[1] = batt;
     
-    char t[4];
-    for(int i = 0; i<4 ; i++)
-       t[i] = '0';
+    long t=0; //Timestamp
    
     memcpy( (void*) &(msg[2]), (void*) &t, 4);
     
@@ -155,6 +136,7 @@ char* dataprotocol2(){
     return msg;
 }
 
+// Arma un paquete para el protocolo 3, 44 bytes
 char* dataprotocol3() {
        
     char* msg = malloc(dataLength(3));
@@ -163,11 +145,9 @@ char* dataprotocol3() {
     msg[0] = '1'; // Val
     msg[1] = batt;
     
-    //long t = 0L;
-    //memcpy((void*) &(msg[2]), (void*) &t, 4);
+    long t = 0;
+    memcpy((void*) &(msg[2]), (void*) &t, 4);
     
-   
-
     char temp = thcp_temp_sensor();
     msg[6] = temp;
 
@@ -204,9 +184,11 @@ char* dataprotocol3() {
     return msg; 
     
 }
+
+// Arma un paquete para el protocolo 4, 24016 bytes
 char * dataprotocol4(){
            
-    char* msg = malloc(dataLength(3));
+    char* msg = malloc(dataLength(4));
 
     char batt = batt_sensor();
     msg[0] = '1'; // Val
@@ -242,7 +224,7 @@ char * dataprotocol4(){
 
 char* mensaje (char protocol, char transportLayer){
      time_t t;
-   
+     int intprotocol = ((unsigned int) protocol)-48;
    
     /* Intializes random number generator */
     srand((unsigned) time(&t));
@@ -253,32 +235,38 @@ char* mensaje (char protocol, char transportLayer){
 	char* hdr = header(protocol, transportLayer);
 	// ESP_LOGI(TAG2,"======= header?? = %i", strlen(strcat(hdr,"\0")));
     char* data;
-	switch (protocol) {
+	switch (intprotocol) {
 		case 9:
+         ESP_LOGI(TAG2,"======= dataprotocol00 ====");
 			data = dataprotocol00();
 			
             break;
 		case 0:
+            ESP_LOGI(TAG2,"======= dataprotocol0 ====");
 			data = dataprotocol0();
-            // ESP_LOGI(TAG2,"======= data?? = %i", strlen(strcat(data,"\0")));
             break;
 		case 1:
+            ESP_LOGI(TAG2,"======= dataprotocol1 ====");
 			data = dataprotocol1();
             
 			break;
 		case 2:
+            ESP_LOGI(TAG2,"======= dataprotocol2 ====");
 			data = dataprotocol2();
             
 			break;
         case 3:
+            ESP_LOGI(TAG2,"======= dataprotocol3 ====");
 			data = dataprotocol3();
             
 			break;
         case 4:
+            ESP_LOGI(TAG2,"======= dataprotocol4 ====");
 			data = dataprotocol4();
             
 			break;
 		default:
+        ESP_LOGI(TAG2,"======= dataprotocol0 default ====");
 			data = dataprotocol0();
             
 			break;
@@ -286,8 +274,11 @@ char* mensaje (char protocol, char transportLayer){
     ESP_LOGI(TAG2,"======= dataLength(protocol) = %i", dataLength(protocol));
 	memcpy((void*) &(mnsj[0]), (void*) hdr, 12);
 	memcpy((void*) &(mnsj[12]), (void*) data, dataLength(protocol));
-	free(hdr);
-	free(data);
+	ESP_LOGI(TAG2,"======= memcpy =============");
+    free(hdr);
+	ESP_LOGI(TAG2,"======= freehdr listo =============");
+    free(data);
+    ESP_LOGI(TAG2,"======= free data listo =============");
 	ESP_LOGI(TAG2,"======= msg Length inside mensaje() = %i", strlen(mnsj));
     return mnsj;
 }

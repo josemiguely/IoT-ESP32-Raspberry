@@ -15,7 +15,7 @@ def tsNow():
 
 def dataSave(header, data):
     protocol=header["protocol"]
-
+    ts = tsNow()
     path=os.getcwd()
     print(f" EL PATH PARA ABRIR ESTA EN {path}")
     try:
@@ -54,96 +54,197 @@ def dataSave(header, data):
             ## Poner la configuracion segun el parser
             print("DATAAAAAA = ",end=" ")
             print(data)
-            ts = tsNow()
-            data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, None, None, None, None, None, None, None, None, None, None, None, None, None, None) # -> Corregir
+            
+            data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, None, None, None, None, None, None, None, None, None, None, None, None, None, None)
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
+            
+            
         except sql.Error as error:
             print("Error al insertar en protocolo 0",error)
         finally:
             if sqliteConnection:
                 sqliteConnection.close()
 
-    elif protocol == "1":
+    elif protocol == 1:
     # Tabla Datos
         try:
-
-            sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3, Data4, Data5, Data6, Data7) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+            print("Entró protocolo 1 en dataSave")
+            sqlite_insert_with_param = """
+            INSERT INTO Datos (
+            IdDevice,
+            MAC,
+            Val,
+            Batt,
+            Timestamp,
+            Temp,
+            Press,
+            Hum,
+            Co,
+            RMS,
+            AmpX,
+            FrecX,
+            AmpY,
+            FrecY,
+            AmpZ,
+            FrecZ,
+            AccX,
+            AccY,
+            AccZ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
             ## Poner la configuracion segun el parser
-            data_tuple = (data[0], data[1], data[2], data[3]) # -> Corregir
-            cursor.excecute(sqlite_insert_with_param, data_tuple)
+            data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, data["Temp"], data["Press"], data["Hum"], data["Co"], None, None, None, None, None, None, None, None, None, None)
+            cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
-            cursor.close
-        except sql.Error as error:
-            print("Failed to insert Python variable into sqlite table", error)
-        finally:
-            if sqliteConnection:
-                sqliteConnection.close()
-
-
-    # elif protocol == "2":
-    # Tabla Datos
-        try:
-    
-            sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
-            ## Poner la configuracion segun el parser
-            data_tuple = (data[0], data[1], data[2], data[3]) # -> Corregir
-            cursor.excecute(sqlite_insert_with_param, data_tuple)
-            sqliteConnection.commit()
-            cursor.close
-        except sql.Error as error:
-            print("Failed to insert Python variable into sqlite table", error)
-        finally:
-            if sqliteConnection:
-                sqliteConnection.close()
-
-    elif protocol == "3":
-    # Tabla Datos
-        try:
             
-            sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10, Data11, Data12, Data13, Data14) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
-            ## Poner la configuracion segun el parser
-            data_tuple = (data[0], data[1], data[2], data[3]) # -> Corregir
-            cursor.excecute(sqlite_insert_with_param, data_tuple)
-            sqliteConnection.commit()
-            cursor.close
         except sql.Error as error:
-            print("Failed to insert Python variable into sqlite table", error)
+            print("Error al insertar en protocolo 1",error)
         finally:
             if sqliteConnection:
                 sqliteConnection.close()
 
-    elif protocol == "4":
+
+    elif protocol == 2:
+    # Tabla Datos
+        try:
+            print("Entró protocolo 2 en dataSave")
+            
+            sqlite_insert_with_param = """
+            INSERT INTO Datos (
+            IdDevice,
+            MAC,
+            Val,
+            Batt,
+            Timestamp,
+            Temp,
+            Press,
+            Hum,
+            Co,
+            RMS,
+            AmpX,
+            FrecX,
+            AmpY,
+            FrecY,
+            AmpZ,
+            FrecZ,
+            AccX,
+            AccY,
+            AccZ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+            ## Poner la configuracion segun el parser
+            data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, data["Temp"], data["Press"], data["Hum"], data["Co"], data["RMS"], None, None, None, None, None, None, None, None, None)
+            print(data_tuple)
+            cursor.execute(sqlite_insert_with_param, data_tuple)
+            sqliteConnection.commit()
+        except sql.Error as error:
+             print("Error al insertar en protocolo 2",error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+
+    elif protocol == 3:
+    # Tabla Datos
+        try:
+            print("Entró protocolo 3 en dataSave")
+            
+            sqlite_insert_with_param = """
+            INSERT INTO Datos (
+            IdDevice,
+            MAC,
+            Val,
+            Batt,
+            Timestamp,
+            Temp,
+            Press,
+            Hum,
+            Co,
+            RMS,
+            AmpX,
+            FrecX,
+            AmpY,
+            FrecY,
+            AmpZ,
+            FrecZ,
+            AccX,
+            AccY,
+            AccZ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+            data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, data["Temp"], data["Press"], data["Hum"], data["Co"], data["RMS"], data["Ampx"],  data["Frecx"], data["Ampy"], data["Frecy"], data["Ampz"], data["Frecz"], None, None, None)
+            cursor.execute(sqlite_insert_with_param, data_tuple)
+            sqliteConnection.commit()
+            #cursor.close()
+        except sql.Error as error:
+             print("Error al insertar en protocolo 3",error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+
+    elif protocol == 4:
     # Tabla Datos
         try:
     
+            print("Entró protocolo 4 en dataSave")
 
-            sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10, Data11, Data12, Data13, Data14) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+            sqlite_insert_with_param = """
+            INSERT INTO Datos (
+            IdDevice,
+            MAC,
+            Val,
+            Batt,
+            Timestamp,
+            Temp,
+            Press,
+            Hum,
+            Co,
+            RMS,
+            AmpX,
+            FrecX,
+            AmpY,
+            FrecY,
+            AmpZ,
+            FrecZ,
+            AccX,
+            AccY,
+            AccZ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
             ## Poner la configuracion segun el parser
-            data_tuple = (data[0], data[1], data[2], data[3]) # -> Corregir
-            cursor.excecute(sqlite_insert_with_param, data_tuple)
+            data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, data["Temp"], data["Press"], data["Hum"], data["Co"], data["RMS"], None, None, None, None, None, None, data["Accx"], data["Accy"], data["Accz"])
+            cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
-            cursor.close
+            
         except sql.Error as error:
-            print("Failed to insert Python variable into sqlite table", error)
+             print("Error al insertar en protocolo 4",error)
         finally:
             if sqliteConnection:
                 sqliteConnection.close()
 
 
+def saveLogs(header):
     # Tabla Logs (Para todos)
-    # try:
+    try:
+        sqliteConnection = sql.connect('../Database/DB.sqlite')
+        cursor = sqliteConnection.cursor()
+    except Exception:
+        print("No se logro conectar a la base de datos")
+        return 
+    ts = tsNow()
+    try:
         
-    #     cursor = sqliteConnection.cursor()
+         cursor = sqliteConnection.cursor()
         
-    #     sqlite_insert_with_param = """INSERT INTO Datos (MessageId, IdDevice, MAC, Timestamp, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data15, Data16, Data17) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
-    #     ## Rellenar con los nombres segun el parser
-    #     data_tuple = ()
-    #     cursor.execute(sqlite_insert_with_param, data_tuple)
-    #     sqliteConnection.coomit()
-    #     cursor.close()
-    # except sql.Error as error:
-    #     print("Failed to insert variable into sqlite table", error)
-    # finally:
-    #     if sqliteConnection:
-    #         sqliteConnection.close()
+         sqlite_insert_with_param = """
+         INSERT INTO Logs (
+            IdDevice,
+            Transport_Layer,
+            Protocol,
+            Timestamp
+            ) 
+         VALUES(?, ?, ?, ?);"""
+         
+         data_tuple = (header["ID_Dev"],header["transport"],header["protocol"],ts)
+         cursor.execute(sqlite_insert_with_param, data_tuple)
+         sqliteConnection.commit()
+         cursor.close()
+    except sql.Error as error:
+         print("Failed to insert variable into sqlite table", error)
+    finally:
+         if sqliteConnection:
+             sqliteConnection.close()
+
+         

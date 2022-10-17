@@ -39,7 +39,7 @@ void tcp_client(void)
     int addr_family = 0;
     int ip_protocol = 0;
 
-    unsigned short msg_total_length[6] = {12+6, 12+16, 12+20, 12+44, 12+24016};
+    unsigned short msg_total_length[6] = {12+6, 12+16, 12+20, 12+44, 12+19216};
     
     while (1) {
 #if defined(CONFIG_EXAMPLE_IPV4)
@@ -73,17 +73,38 @@ void tcp_client(void)
 
             /* separar los mensajes en caso de ser mayores a el buffer del server */
             /*generar el mensaje */
-            char protocol = '0';
+            char protocol = '4';
             char transportlayer= '0'; // TCP = 0 ; UDP = 1;
+            ESP_LOGE(TAG, "Creando mensaje...\n");
             payload = mensaje(protocol,transportlayer);
-            ESP_LOGI(TAG, "_____Mensaje = %s________", payload);
-            ESP_LOGI(TAG,"======= Mensaje Length = %i", strlen(payload));
+            ESP_LOGE(TAG, "Mensaje del protocolo %c creado :D...\n",protocol);
+           
+            ESP_LOGI(TAG, "_____Mensaje = %s________\n", payload);
+            int largo_mensaje= msg_total_length[((int) protocol)-48];
+            ESP_LOGI(TAG,"======= Mensaje Length = %i\n", largo_mensaje);
+             
             
-            int largo_mensage= msg_total_length[((int) protocol)-48];
-            int err = send(sock, payload, largo_mensage, 0);
+            //
+            if (protocol=='4'){
+                ESP_LOGE(TAG, "Enviando información del protocolo 4... ");
+                for(int i=0;i<31;i++){
+                    int err = send(sock, payload, 1024, 0);
+                        if (err < 0) {
+                            ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
+                            break;
+                        }
+                }
+            }
+
+            else{
+
+            
+            int err = send(sock, payload, largo_mensaje, 0);
             if (err < 0) {
                 ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
                 break;
+            }
+
             }
 
             /*int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
