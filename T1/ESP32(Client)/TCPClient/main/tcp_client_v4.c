@@ -27,7 +27,7 @@
 #endif
 
 #define PORT CONFIG_EXAMPLE_PORT
-
+#define PACK_LEN 1024
 static const char *TAG = "example";
 char *payload;
 
@@ -79,33 +79,74 @@ void tcp_client(void)
             payload = mensaje(protocol,transportlayer);
             ESP_LOGE(TAG, "Mensaje del protocolo %c creado :D...\n",protocol);
            
-            ESP_LOGI(TAG, "_____Mensaje = %s________\n", payload);
+            //ESP_LOGI(TAG, "_____Mensaje = %s________\n", payload);
             int largo_mensaje= msg_total_length[((int) protocol)-48];
             ESP_LOGI(TAG,"======= Mensaje Length = %i\n", largo_mensaje);
              
-            
-            //
-            if (protocol=='4'){
-                ESP_LOGE(TAG, "Enviando información del protocolo 4... ");
-                for(int i=0;i<31;i++){
-                    int err = send(sock, payload, 1024, 0);
-                        if (err < 0) {
-                            ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
-                            break;
-                        }
+            printf("Sending!\n");
+            char rx_buffer[128];
+
+            for (int i = 0; i < largo_mensaje; i += PACK_LEN)
+            {
+
+                // Generamos el siguiente trozo
+                int size = fmin(PACK_LEN, largo_mensaje - i);
+                char *pack = malloc(size);
+                memcpy(pack, &(payload[i]), size);
+                ESP_LOGE(TAG, "== size =  %i ==", size);
+                 ESP_LOGE(TAG, "== i = =  %i ==", i);
+
+                //Enviamos el trozo
+                int err = send(sock, pack, size, 0);
+                ESP_LOGE(TAG, "== enviado un paquete  ==");
+                free(pack);
+                if (err < 0)
+                {
+                    ESP_LOGE(TAG, "== Error occurred during sending: errno %d ==", err);
+                }
+
+                // wait for confirmation
+                int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
+                ESP_LOGE(TAG, "== len que llega %i ==", len);
+                // Error occurred during receiving
+                if (len < 0)
+                {
+                    //En caso de error abortamos
+                    ESP_LOGE(TAG, "== recv failed: errno %d ==", err);
+                    break;
+                }
+                else
+                {
+                    rx_buffer[len] = 0;
+                    char OK_r = rx_buffer[0];
+                     ESP_LOGE(TAG, "== OK que llega %c ==", OK_r);
+                    if (!OK_r)
+                    {
+                        ESP_LOGE(TAG, "== Server error in fragmented send. ==");
+                        free(payload);
+                        break;
+                    }
                 }
             }
+            //el último mensaje es solo un \0 para avisarle al server que terminamos
+            int err = send(sock, "\0", 1, 0);
 
-            else{
-
+            free(payload);
+    
+    
+    //
             
+
+            /*else{
+
+            ESP_LOGE(TAG, "Enviando mensaje sin for...");
             int err = send(sock, payload, largo_mensaje, 0);
             if (err < 0) {
                 ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
                 break;
             }
 
-            }
+            }*/
 
             /*int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
             // Error occurred during receiving

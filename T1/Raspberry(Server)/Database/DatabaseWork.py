@@ -204,7 +204,7 @@ def dataSave(header, data):
             AccY,
             AccZ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
             ## Poner la configuracion segun el parser
-            data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, data["Temp"], data["Press"], data["Hum"], data["Co"], data["RMS"], None, None, None, None, None, None, data["Accx"], data["Accy"], data["Accz"])
+            data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, data["Temp"], data["Press"], data["Hum"], data["Co"], None, None, None, None, None, None, None, data["Accx"], data["Accy"], data["Accz"])
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
             
@@ -248,3 +248,19 @@ def saveLogs(header):
              sqliteConnection.close()
 
          
+def getFromTable():
+    try:
+        sqliteConnection = sql.connect('../Database/DB.sqlite')
+        cursor = sqliteConnection.cursor()
+    except Exception:
+        print("No se logro conectar a la base de datos")
+        return
+    finally:
+        cursor.excecute("SELECT * FROM Config")
+        row = cursor.fetchall()
+
+        # Checkear como se entregan los datos
+        print(row)
+        id_protocol = row[0]
+        transport_layer = row[1]
+        return id_protocol, transport_layer   #row[0] = 

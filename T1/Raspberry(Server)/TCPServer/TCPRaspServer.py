@@ -31,18 +31,37 @@ while True:
   
     while True:
         try:
-            data=""
+            # data=""
             print("Esperando recibir data...")
-            for i in range(31):
-                print(f" cantidad de recv {i}")
-                if i==0:
-                    data=conn.recv(1024)
-                else:
-                    data += conn.recv(1024)
-                
-
+            # data=conn.recv(1024) #2**15
+            ### INICIO CODIGO AUX
+            doc = b""
+            while True:
+               
+                try:
+                    print("esperando")
+                    conn.settimeout(8)
+                    data = conn.recv(1024)
+                    print("llego algo")
+                    if data == b'\0':
+                        
+                        print("Llego toda la informacion")
+                        break
+                    else:
+                        print("doc+=")
+                        doc += data
+                except TimeoutError:
+                    conn.send(b'\0')
+                    raise
+                except Exception:
+                    conn.send(b'\0')
+                    raise
+                print(f"Enviando 1")
+                conn.send(b'\1')
+                print(f"Termino de enviar 1")
             
-            # data = conn.recv(19216)
+            
+            ##TERMINO CODIGO AUX
             print("Llego data :D")
             if data == b'':
                 print("Llego data vacía, termina la conexión")
@@ -52,9 +71,19 @@ while True:
         
         #conn.send(data)
         print("Comienzo de empaquetamiento de data...")
-        (header,data) = Desempaquetamiento.parseData(data)
-        print("info = ",header,data)
-        res= DatabaseWork.dataSave(header,data)
+        try:
+            (header,data) = Desempaquetamiento.parseData(doc)
+            print("info = ",header,data)
+            DatabaseWork.dataSave(header,data)
+            print("Enviando OK!")
+            conn.send(b'\1')
+            print("Se envio OK!")
+        except Exception as e:
+            print("Excepción")
+            print(e)
+            print(str(e))
+            print("Fin de excepción")
+            break 
         DatabaseWork.saveLogs(header)
         print("Se desempaqueto data")
         break

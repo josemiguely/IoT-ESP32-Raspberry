@@ -21,7 +21,7 @@ int int_rand(int lower,int upper){
 
 float * acceloremeter_sensor_x(){
     float* arr = malloc(1600 * sizeof(float));
-    for(int i = 0; i < 1600;i++){
+    for(int i = 0; i < 1600; i++){
         arr[i] = 2*sin(2*3.14*0.000*i);
     }
     return arr;    
