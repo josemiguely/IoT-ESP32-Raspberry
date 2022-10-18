@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
-
+static const char *TAG4 = "example";
 
 //Simulación Sensores
 
@@ -22,22 +22,27 @@ int int_rand(int lower,int upper){
 float * acceloremeter_sensor_x(){
     float* arr = malloc(1600 * sizeof(float));
     for(int i = 0; i < 1600; i++){
-        arr[i] = 2*sin(2*3.14*0.000*i);
+        arr[i] = 2*sin(2*3.14*0.001*i);
     }
+    ESP_LOGE(TAG4, "float del acceloremeter de X10 %f \n", arr[10]);
+    ESP_LOGE(TAG4, "float del acceloremeter de X20 %f \n", arr[20]);
+    ESP_LOGE(TAG4, "float del acceloremeter de X26 %f \n", arr[26]);
+    ESP_LOGE(TAG4, "float del acceloremeter de X31 %f \n", arr[31]);
     return arr;    
 }
 float * acceloremeter_sensor_y(){
     float* arr = malloc(1600 * sizeof(float));
     for(int i = 0; i < 1600;i++){
-        arr[i] = 2*cos(3*3.14*0.000*i);
-    }    
+        arr[i] = 2*cos(3*3.14*0.001*i);
+    }
+       
     return arr;
 
 }
 float * acceloremeter_sensor_z(){
     float* arr = malloc(1600 * sizeof(float));
     for(int i = 0; i < 1600;i++){
-        arr[i] = 2*sin(10*3.14*0.000*i);
+        arr[i] = 2*sin(10*3.14*0.001*i);
     }   
     return arr; 
 }

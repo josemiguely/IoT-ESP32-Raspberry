@@ -40,7 +40,7 @@ while True:
                
                 try:
                     print("esperando")
-                    conn.settimeout(8)
+                    conn.settimeout(10)
                     data = conn.recv(1024)
                     print("llego algo")
                     if data == b'\0':
@@ -74,6 +74,9 @@ while True:
         try:
             (header,data) = Desempaquetamiento.parseData(doc)
             print("info = ",header,data)
+            arreglos = data[16::]
+            accx = arreglos[:2016]
+            accy = arreglos[2017:]
             DatabaseWork.dataSave(header,data)
             print("Enviando OK!")
             conn.send(b'\1')

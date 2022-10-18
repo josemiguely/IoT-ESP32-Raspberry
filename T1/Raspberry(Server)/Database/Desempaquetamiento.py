@@ -44,6 +44,7 @@ def protUnpack(protocol:int, data):
     
     # protocol_unpack = ["<B", "<Bl", "<BlBfBf"]
     protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf1600f1600f1600f"]
+    # protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf4800f"]
     print(f" protUnpack = size of regex used= {calcsize(protocol_unpack[protocol])}")
     return unpack(protocol_unpack[protocol], data)
 
