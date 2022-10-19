@@ -5,7 +5,7 @@
 #include "esp_event.h"
 
 #include "UDPClient/main/udp_client.c"
-#include "TCPClient/main/tcp_client_main.c"
+#include "TCPClient/main/tcp_client_v4.c"
 
 
 // Excecute main program
@@ -25,9 +25,61 @@ void app_main(void)
     ESP_ERROR_CHECK(example_connect());
 
     tcp_client();
+    printf("No se deberia printear esto\n");
+    int ch = 0;             // Character to end program
+    int code;               // exit value
+    int transport_layer=0;  // 0 -> TCP  || 1 -> UDP
+    int id_protocol;
+
+    // Create tcp server to receive data
+
+
+    
+    scanf("%d %d", transport_layer, id_protocol);
+
+
+    if (transport_layer) {              // Create UDP server
+        /*while(1) {
+            // Exit program pressing X
+            ch = getch();
+            if (ch = 'x' || 'X') {
+                printf("Clossing Connection\n");
+                code = EXIT_SUCCESS;
+                break;
+            }
+
+            // Excecute server
+
+
+        }    */
+    
+    
+    
+    
+    } 
+    else {     
+                                 // Create TCP server
+
+         tcp_client();                         
+       /* while(1) {
+            // Exit program pressing X
+            ch = getch();
+            if (ch = 'x' || 'X') {
+                printf("Clossing Connection\n");
+                code = EXIT_SUCCESS;
+                break;
+            }
+
+            // Excecute server
+
+
+        }*/
+    }
+
+
 }
 
-int main() {
+/*int main() {
     printf("No se deberia printear esto\n");
     int ch = 0;             // Character to end program
     int code;               // exit value
@@ -82,4 +134,4 @@ int main() {
 
 
     return 0;
-}
+}*/

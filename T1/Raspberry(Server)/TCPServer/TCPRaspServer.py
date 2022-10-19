@@ -73,10 +73,13 @@ while True:
         print("Comienzo de empaquetamiento de data...")
         try:
             (header,data) = Desempaquetamiento.parseData(doc)
-            print("info = ",header,data)
-            arreglos = data[16::]
-            accx = arreglos[:2016]
-            accy = arreglos[2017:]
+            print("SUPER WENA DATA")
+            print (data["Accx"])
+            # print (data["Accx"][1])
+            # print("info = ",header,data)
+           # arreglos = data[16::]
+           # accx = arreglos[:2016]
+            #accy = arreglos[2017:]
             DatabaseWork.dataSave(header,data)
             print("Enviando OK!")
             conn.send(b'\1')
