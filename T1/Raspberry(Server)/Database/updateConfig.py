@@ -4,13 +4,16 @@ import sqlite3 as sq
 
 
 
-insertar='''
-UPSERT INTO Config (Id, ID_protocol, Transport_Layer)
-VALUES (1,0,0);'''
+update='''
+UPDATE Config
+SET ID_protocol=4,
+    Transport_layer=1
+WHERE Id=1
+'''
 
 conn = sq.connect("DB.sqlite")
 cur = conn.cursor()
-cur.execute(insertar)
+cur.execute(update)
 conn.commit()
 print("Insertada nueva configuracion")
 conn.close()

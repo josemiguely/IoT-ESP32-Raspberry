@@ -35,11 +35,21 @@ createLogs = '''CREATE TABLE Logs (
 createConfig = '''CREATE TABLE Config (
     Id INTEGER  PRIMARY KEY,
     ID_protocol INTEGER NOT NULL,
-    Transport_Layer INTEGER NOT NULL
+    Transport_Layer INTEGER NOT NULL,
     unique(Id,ID_protocol,Transport_Layer)
 );'''
 
+initConfig='''
+INSERT INTO Config (Id, ID_protocol, Transport_Layer)
+VALUES (1,0,0);'''
+
+#conn = sq.connect("DB.sqlite")
+#cur = conn.cursor()
+
+#print("Insertada nueva configuracion")
+#conn.close()
 import sqlite3 as sql
+
 
 
 conn = sql.connect("DB.sqlite")
@@ -47,6 +57,8 @@ cur = conn.cursor()
 cur.execute(createDatos)
 cur.execute(createLogs)
 cur.execute(createConfig)
+cur.execute(initConfig)
+conn.commit()
 conn.close()
 
 # inicializa la BDD
