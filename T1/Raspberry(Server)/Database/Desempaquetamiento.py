@@ -30,7 +30,7 @@ def parseData(packet):
     header = packet[:12]
     data = packet[12:]
     headerD = headerDict(header)
-    print(f" headerD[length] = {headerD['length']}")
+    # print(f" headerD[length] = {headerD['length']}")
     print(f" len(data) = {len(data)}")
     if (headerD["length"]!=len(data)-1):
         print("No llego correctamente la data, desechar paquete")
@@ -121,7 +121,7 @@ def dataDict(protocol, data):
 
     try:
         data_dict = protFunc(protocol, p[protocol])(data)
-        print(data_dict)
+        # print(data_dict)
         return data_dict
     except Exception:
         print("Data unpacking Error:", traceback.format_exc())

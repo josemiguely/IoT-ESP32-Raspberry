@@ -16,7 +16,9 @@ def int_to_string_bytearray(a: int) -> bytearray:
 def string_bytearray_to_int(b: bytearray) -> int:
     return int(b.decode('utf-8'))
 
-def run_server_tcp(void):
+
+
+def run_server_tcp():
 
     # "192.168.5.177"  # Standard loopback interface address (localhost)
     HOST = "192.168.4.1"#"localhost"
@@ -94,3 +96,5 @@ def run_server_tcp(void):
         print('Conexión cerrada')
         
 
+
+run_server_tcp()

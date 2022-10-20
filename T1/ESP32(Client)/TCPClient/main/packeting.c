@@ -6,6 +6,7 @@
 #include "esp_event.h"
 #include "esp_sleep.h"
 #include <string.h>
+#include "esp_log.h"
 
 
 

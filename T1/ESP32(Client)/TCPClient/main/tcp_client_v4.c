@@ -3,20 +3,23 @@
  *
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  */
-#include "esp_log.h"
 #include "sdkconfig.h"
 #include <string.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <errno.h>
-#include <netdb.h>            // struct addrinfo
+#include <netdb.h>  
 #include <arpa/inet.h>
 #include "esp_netif.h"
+#include "esp_log.h"
 #include <math.h>
+#include "packeting.c"
+          
 
 
-extern void ESP_LOGI(const char* a, char* data, int* len, int err);
-extern void ESP_LOGE(const char* a, char* data, int*len, int err);
+
+// extern void ESP_LOGI(const char* a, char* data, int* len, int err);
+// extern void ESP_LOGE(const char* a, char* data, int*len, int err);
 
 #if defined(CONFIG_EXAMPLE_SOCKET_IP_INPUT_STDIN)
 #include "addr_from_stdin.h"
@@ -34,18 +37,36 @@ static const char *TAG = "example";
 char *payload;
 
 
-extern unsigned short dataLength(char protocol);
-extern unsigned short messageLength(char protocol);
-extern char* header(char protocol, char transportLayer);
-extern char* dataprotocol1();
-extern char* dataprotocol2();
-extern char* dataprotocol3();
-extern char* dataprotocol4();
-extern char* mensaje (char protocol, char transportLayer);
-extern 
+// extern unsigned short dataLength(char protocol);
+// extern unsigned short messageLength(char protocol);
+// extern char* header(char protocol, char transportLayer);
+// extern char* dataprotocol1();
+// extern char* dataprotocol2();
+// extern char* dataprotocol3();
+// extern char* dataprotocol4();
+// extern char* mensaje (char protocol, char transportLayer);
+// extern 
 
-void tcp_client(char protocol)
-{
+
+void tcp_client(void) //Se deberia llamar tcp_udp_client()
+{   
+    //Mandar a pedir a rasbperry configuración inicial...
+
+
+    //Obtener protocolo y Tlayer....
+
+
+
+
+    //Ejecutar TCP o UDP...
+
+    //
+
+
+
+
+
+
     char rx_buffer[128];
     char host_ip[] = HOST_IP_ADDR;
     int addr_family = 0;
@@ -85,8 +106,8 @@ void tcp_client(char protocol)
 
             /* separar los mensajes en caso de ser mayores a el buffer del server */
             /*generar el mensaje */
-            //char protocol = '4';
-            char transportlayer= '0'; // TCP = 0 ; UDP = 1;
+            char protocol = '4';
+            char transportlayer='0'; // TCP = 0 ; UDP = 1;
             ESP_LOGE(TAG, "Creando mensaje...\n");
             payload = mensaje(protocol,transportlayer);
             ESP_LOGE(TAG, "Mensaje del protocolo %c creado :D...\n",protocol);
