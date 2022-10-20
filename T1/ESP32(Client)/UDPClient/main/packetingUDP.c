@@ -1,15 +1,14 @@
-#include "packeting.h"
 #include "sensors.c"
+#include <math.h>
 #include <stdlib.h>
 #include "esp_system.h"
 #include "esp_mac.h"
+#include "esp_log.h"
 #include "esp_event.h"
 #include "esp_sleep.h"
-#include <string.h>
+#include "packeting.h"
 
-
-
-static const char *TAG2 = "example";
+static const char *TAG13 = "example";
 
 //Entrega el largo de la data según el protocolo
 
@@ -18,7 +17,7 @@ int loop;
 
 unsigned short dataLength(char protocol){
     unsigned int uprotocol =((unsigned int) protocol)-48;
-    ESP_LOGI(TAG2,"======= uprotocol = %i", uprotocol);
+    ESP_LOGI(TAG13,"======= uprotocol = %i", uprotocol);
 
     return lengmsg[uprotocol]-1;
 }
@@ -211,15 +210,15 @@ char * dataprotocol4(){
     memcpy((void*) &(msg[12]), (void*) &co, 4);
 
     float * accx = acceloremeter_sensor_x();
-    // ESP_LOGE(TAG2, "primer valor de accx 3 %f\n", accx[3]); 
-    // ESP_LOGE(TAG2, "primer valor de accx 14 %f\n", accx[14]); 
-    // ESP_LOGE(TAG2, "primer valor de accx 50 %f\n", accx[50]); 
+    // ESP_LOGE(TAG13, "primer valor de accx 3 %f\n", accx[3]); 
+    // ESP_LOGE(TAG13, "primer valor de accx 14 %f\n", accx[14]); 
+    // ESP_LOGE(TAG13, "primer valor de accx 50 %f\n", accx[50]); 
     memcpy((void*) &(msg[16]), (void*) accx, 8000);
-    // ESP_LOGE(TAG2, "====primer valor de mensg 0 %f\n===",(float) msg[16]); 
-    // ESP_LOGE(TAG2, "====primer valor de mensg 1 %f\n===",(float) msg[17]); 
-    // ESP_LOGE(TAG2, "====primer valor de mensg 2 %f\n===", (float)msg[18]); 
-    // ESP_LOGE(TAG2, "====primer valor de mensg 3 %f\n===", (float)msg[19]); 
-    // ESP_LOGE(TAG2, "====primer valor de mensg 4 %f\n===", (float)msg[20]); 
+    // ESP_LOGE(TAG13, "====primer valor de mensg 0 %f\n===",(float) msg[16]); 
+    // ESP_LOGE(TAG13, "====primer valor de mensg 1 %f\n===",(float) msg[17]); 
+    // ESP_LOGE(TAG13, "====primer valor de mensg 2 %f\n===", (float)msg[18]); 
+    // ESP_LOGE(TAG13, "====primer valor de mensg 3 %f\n===", (float)msg[19]); 
+    // ESP_LOGE(TAG13, "====primer valor de mensg 4 %f\n===", (float)msg[20]); 
     float * accy = acceloremeter_sensor_y();
     memcpy((void*) &(msg[8016]), (void*) accy, 8000);
 
@@ -237,56 +236,56 @@ char* mensaje (char protocol, char transportLayer){
     /* Intializes random number generator */
     srand((unsigned) time(&t));
 
-	ESP_LOGI(TAG2,"======= messageLength(protocol) = %i", messageLength(protocol));
+	ESP_LOGI(TAG13,"======= messageLength(protocol) = %i", messageLength(protocol));
     char* mnsj = malloc(messageLength(protocol));
 	mnsj[messageLength(protocol)-1]= '\0';
 	char* hdr = header(protocol, transportLayer);
-	// ESP_LOGI(TAG2,"======= header?? = %i", strlen(strcat(hdr,"\0")));
+	// ESP_LOGI(TAG13,"======= header?? = %i", strlen(strcat(hdr,"\0")));
     char* data;
 	switch (intprotocol) {
 		case 9:
-         ESP_LOGI(TAG2,"======= dataprotocol00 ====");
+         ESP_LOGI(TAG13,"======= dataprotocol00 ====");
 			data = dataprotocol00();
 			
             break;
 		case 0:
-            ESP_LOGI(TAG2,"======= dataprotocol0 ====");
+            ESP_LOGI(TAG13,"======= dataprotocol0 ====");
 			data = dataprotocol0();
             break;
 		case 1:
-            ESP_LOGI(TAG2,"======= dataprotocol1 ====");
+            ESP_LOGI(TAG13,"======= dataprotocol1 ====");
 			data = dataprotocol1();
             
 			break;
 		case 2:
-            ESP_LOGI(TAG2,"======= dataprotocol2 ====");
+            ESP_LOGI(TAG13,"======= dataprotocol2 ====");
 			data = dataprotocol2();
             
 			break;
         case 3:
-            ESP_LOGI(TAG2,"======= dataprotocol3 ====");
+            ESP_LOGI(TAG13,"======= dataprotocol3 ====");
 			data = dataprotocol3();
             
 			break;
         case 4:
-            ESP_LOGI(TAG2,"======= dataprotocol4 ====");
+            ESP_LOGI(TAG13,"======= dataprotocol4 ====");
 			data = dataprotocol4();
             
 			break;
 		default:
-        ESP_LOGI(TAG2,"======= dataprotocol0 default ====");
+        ESP_LOGI(TAG13,"======= dataprotocol0 default ====");
 			data = dataprotocol0();
             
 			break;
 	}
-    ESP_LOGI(TAG2,"======= dataLength(protocol) = %i", dataLength(protocol));
+    ESP_LOGI(TAG13,"======= dataLength(protocol) = %i", dataLength(protocol));
 	memcpy((void*) &(mnsj[0]), (void*) hdr, 12);
 	memcpy((void*) &(mnsj[12]), (void*) data, dataLength(protocol));
-	ESP_LOGI(TAG2,"======= memcpy =============");
+	ESP_LOGI(TAG13,"======= memcpy =============");
     free(hdr);
-	ESP_LOGI(TAG2,"======= freehdr listo =============");
+	ESP_LOGI(TAG13,"======= freehdr listo =============");
     free(data);
-    ESP_LOGI(TAG2,"======= free data listo =============");
-	ESP_LOGI(TAG2,"======= msg Length inside mensaje() = %i", strlen(mnsj));
+    ESP_LOGI(TAG13,"======= free data listo =============");
+	ESP_LOGI(TAG13,"======= msg Length inside mensaje() = %i", strlen(mnsj));
     return mnsj;
 }

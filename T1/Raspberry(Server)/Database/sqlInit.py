@@ -17,9 +17,9 @@ createDatos = '''CREATE TABLE Datos (
     FrecY FLOAT,
     AmpZ FLOAT,
     FrecZ FLOAT,
-    AccX FLOAT,
-    AccY FLOAT,
-    AccZ FLOAT
+    AccX TEXT,
+    AccY TEXT,
+    AccZ TEXT
 );'''
 
 createLogs = '''CREATE TABLE Logs (

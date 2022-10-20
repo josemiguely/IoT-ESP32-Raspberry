@@ -30,22 +30,34 @@ def parseData(packet):
     header = packet[:12]
     data = packet[12:]
     headerD = headerDict(header)
-    print(headerD)
-    dataD = dataDict(headerD["protocol"], data)
-    #if dataD is not None:
-    #    dataSave(headerD, dataD)
-    #print(header, data)
-    #return None if dataD is None else {**headerD, **dataD}
-    return None if dataD is None else (headerD,dataD)
+    print(f" headerD[length] = {headerD['length']}")
+    print(f" len(data) = {len(data)}")
+    if (headerD["length"]!=len(data)-1):
+        print("No llego correctamente la data, desechar paquete")
+        return (None,None)
 
-    
-def protUnpack(protocol:int, data):
-    print(f"bytes in data = {len(data)}")
-    
-    # protocol_unpack = ["<B", "<Bl", "<BlBfBf"]
-    protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf1600f1600f1600f"]
+    else:
+        print(headerD)
+        dataD = dataDict(headerD["protocol"], data)
+        #if dataD is not None:
+        #    dataSave(headerD, dataD)
+        #print(header, data)
+        #return None if dataD is None else {**headerD, **dataD}
+        return None if dataD is None else (headerD,dataD)
+
     # protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf4800f"]
-    print(f" protUnpack = size of regex used= {calcsize(protocol_unpack[protocol])}")
+    # protocol_unpack = ["<B", "<Bl", "<BlBfBf"]
+    
+
+def protUnpack(protocol:int, data):
+    print(f"protUnpack bytes in data = {len(data)}")
+
+    protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf2000f2000f2000f"]
+   
+
+   
+
+
     return unpack(protocol_unpack[protocol], data)
 
 def headerDict(data):
@@ -55,16 +67,20 @@ def headerDict(data):
     # "<2s6B2BH"
     # "<2s6BBB2B"
     ID_Dev,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg = unpack("<2s6BBBH", data)
+    
+   
+    print("unpack realizado")
     ID_Dev = ID_Dev.decode('ascii')
     MAC = ".".join([hex(x)[2:] for x in [M1, M2, M3, M4, M5, M6]])
     ID_protocol2=int(chr(ID_protocol))
     TransportL2=int(chr(TransportL))
-    return {"ID_Dev":ID_Dev,"MAC":MAC, "protocol":ID_protocol2, "transport":TransportL2, "length":leng_msg}
+    return_dict={"ID_Dev":ID_Dev,"MAC":MAC, "protocol":ID_protocol2, "transport":TransportL2, "length":leng_msg}
+    
+    return return_dict
 
 def dataDict(protocol, data):
     print(f" Llego el protocolo = {protocol}")
-    #protocol2 = protocol.encode('utf-8')
-    #print(f" Llego el protocolo2 = {protocol2}")
+    
     
     if protocol not in [0,1,2,3,4]:
         print("Error: protocol doesnt exist")
@@ -73,7 +89,27 @@ def dataDict(protocol, data):
     def protFunc(protocol, keys):
         def p(data):
             unp = protUnpack(protocol, data)
+            # print(unp)
+           
+            if (protocol==4):
+                
+                unp=list(unp)
+                lista_floatsACCx=unp[7:2007]
+                lista_floatsACCy=unp[2007:4007]
+                lista_floatsACCz=unp[4007:]
+        
+                stringfloatAccx="["+";".join(map(str,lista_floatsACCx))+"]"
+                stringfloatAccy="["+";".join(map(str,lista_floatsACCy))+"]"
+                stringfloatAccz="["+";".join(map(str,lista_floatsACCz))+"]"
+                
+                unp= unp[0:7]
+                unp.append(stringfloatAccx)
+                unp.append(stringfloatAccy)
+                unp.append(stringfloatAccz)
+               
+            
             return {key:val for (key,val) in zip(keys, unp)}
+            
         return p
 
     p0 = ["Val","Batt","Timestamp"]

@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  */
+#include "esp_log.h"
 #include "sdkconfig.h"
 #include <string.h>
 #include <unistd.h>
@@ -11,10 +12,11 @@
 #include <netdb.h>            // struct addrinfo
 #include <arpa/inet.h>
 #include "esp_netif.h"
-#include "esp_log.h"
-#include "packeting.c"
+#include <math.h>
 
 
+extern void ESP_LOGI(const char* a, char* data, int* len, int err);
+extern void ESP_LOGE(const char* a, char* data, int*len, int err);
 
 #if defined(CONFIG_EXAMPLE_SOCKET_IP_INPUT_STDIN)
 #include "addr_from_stdin.h"
@@ -32,14 +34,24 @@ static const char *TAG = "example";
 char *payload;
 
 
-void tcp_client(void)
+extern unsigned short dataLength(char protocol);
+extern unsigned short messageLength(char protocol);
+extern char* header(char protocol, char transportLayer);
+extern char* dataprotocol1();
+extern char* dataprotocol2();
+extern char* dataprotocol3();
+extern char* dataprotocol4();
+extern char* mensaje (char protocol, char transportLayer);
+extern 
+
+void tcp_client(char protocol)
 {
     char rx_buffer[128];
     char host_ip[] = HOST_IP_ADDR;
     int addr_family = 0;
     int ip_protocol = 0;
 
-    unsigned short msg_total_length[6] = {12+6, 12+16, 12+20, 12+44, 12+19216};
+    unsigned short msg_total_length[6] = {12+6, 12+16, 12+20, 12+44, 12+24016};
     
     while (1) {
 #if defined(CONFIG_EXAMPLE_IPV4)
@@ -67,13 +79,13 @@ void tcp_client(void)
             break;
         }
         ESP_LOGI(TAG, "Successfully connected");
-        uint64_t timer = 60;
+        //uint64_t timer = 60;
 
         while (1) {
 
             /* separar los mensajes en caso de ser mayores a el buffer del server */
             /*generar el mensaje */
-            char protocol = '4';
+            //char protocol = '4';
             char transportlayer= '0'; // TCP = 0 ; UDP = 1;
             ESP_LOGE(TAG, "Creando mensaje...\n");
             payload = mensaje(protocol,transportlayer);
@@ -130,6 +142,7 @@ void tcp_client(void)
             }
             //el último mensaje es solo un \0 para avisarle al server que terminamos
             int err = send(sock, "\0", 1, 0);
+
 
             free(payload);
     

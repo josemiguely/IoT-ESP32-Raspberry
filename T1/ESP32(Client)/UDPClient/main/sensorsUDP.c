@@ -1,4 +1,3 @@
-
 #include "sensors.h"
 #include <stdlib.h>
 #include <math.h>
@@ -110,18 +109,4 @@ float rms(){
     float sq = pow(accelerometer_kpi_amp_x(),2)+ pow(accelerometer_kpi_amp_y(),2)+pow(accelerometer_kpi_amp_z(),2);
     return pow(sq,0.5); 
 }
-
-
-
-
-
-
-
-//Crear paquete
-
-
-
-
-
-
 

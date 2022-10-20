@@ -52,8 +52,7 @@ def dataSave(header, data):
             AccY,
             AccZ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
             ## Poner la configuracion segun el parser
-            print("DATAAAAAA = ",end=" ")
-            print(data)
+            
             
             data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, None, None, None, None, None, None, None, None, None, None, None, None, None, None)
             cursor.execute(sqlite_insert_with_param, data_tuple)
@@ -131,7 +130,7 @@ def dataSave(header, data):
             AccZ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
             ## Poner la configuracion segun el parser
             data_tuple = (header["ID_Dev"], header["MAC"],int(chr(data["Val"])), data["Batt"],ts, data["Temp"], data["Press"], data["Hum"], data["Co"], data["RMS"], None, None, None, None, None, None, None, None, None)
-            print(data_tuple)
+           
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
         except sql.Error as error:
@@ -248,19 +247,27 @@ def saveLogs(header):
              sqliteConnection.close()
 
          
-def getFromTable():
+def getConfig():
     try:
-        sqliteConnection = sql.connect('../Database/DB.sqlite')
-        cursor = sqliteConnection.cursor()
-    except Exception:
-        print("No se logro conectar a la base de datos")
-        return
-    finally:
-        cursor.excecute("SELECT * FROM Config")
-        row = cursor.fetchall()
+        path=os.getcwd()
+        print(f" EL PATH PARA ABRIR ESTA EN {path}")
+        # conn = sql.connect('/Database/DB.sqlite')
+        conn=sql.connect('./Database/DB.sqlite')
+        
+        cur = conn.cursor()
 
+        cur.execute("SELECT ID_protocol,Transport_Layer FROM Config")
+        row = cur.fetchone()
         # Checkear como se entregan los datos
         print(row)
         id_protocol = row[0]
         transport_layer = row[1]
         return id_protocol, transport_layer   #row[0] = 
+
+    except Exception as e:
+        
+        print("Algo salio mal en getConfig uwu")
+        print(e)
+        return
+    
+        
