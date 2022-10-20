@@ -19,10 +19,11 @@ def dataSave(header, data):
     path=os.getcwd()
     print(f" EL PATH PARA ABRIR ESTA EN {path}")
     try:
-        sqliteConnection = sql.connect('../Database/DB.sqlite')
+        sqliteConnection = sql.connect('./Database/DB.sqlite')
         cursor = sqliteConnection.cursor()
-    except Exception:
-        print("No se logro conectar a la base de datos")
+    except Exception as e:
+        print("Error en dataSave")
+        print(e)
         return 
 
     if  protocol == 0:
@@ -217,10 +218,11 @@ def dataSave(header, data):
 def saveLogs(header):
     # Tabla Logs (Para todos)
     try:
-        sqliteConnection = sql.connect('../Database/DB.sqlite')
+        sqliteConnection = sql.connect('./Database/DB.sqlite')
         cursor = sqliteConnection.cursor()
-    except Exception:
-        print("No se logro conectar a la base de datos")
+    except Exception as e:
+        print("Error en saveLogs")
+        print(e)
         return 
     ts = tsNow()
     try:

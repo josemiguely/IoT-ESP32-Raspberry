@@ -44,9 +44,11 @@ def run_server_udp():
                 (header,data)=Desempaquetamiento.parseData(doc)
                 if data==None:
                     print("Paquete malo, esperaremos mas información")
+                    break
                 else:
                     DatabaseWork.dataSave(header,data)
                     DatabaseWork.saveLogs(header)
+                    break
 
             except Exception as e:
                     print("Oh no, ocurre una excepción en parseo/guardado UDP. Aquí va:")
@@ -55,40 +57,4 @@ def run_server_udp():
 
             
 
-
-                
-
-
-
-
-                    
-                    
-                    
-            #         ##TERMINO CODIGO AUX
-            #         print("Llego data :D")
-            #         if data == b'':
-            #             print("Llego data vacía, termina la conexión")
-            #             break
-            #     except ConnectionResetError:
-            #         break
-                
-            #     #conn.send(data)
-            #     print("Comienzo de empaquetamiento de data...")
-            #     try:
-            #         (header,data) = Desempaquetamiento.parseData(doc)
-            #         DatabaseWork.dataSave(header,data)
-                    
-            #         conn.send(b'\1')
-                    
-            #     except Exception as e:
-            #         print("Oh no, ocurre una excepción. Aquí va:")
-            #         print(e)
-            #         print(str(e))
-            #         break 
-            #     DatabaseWork.saveLogs(header)
-
-            #     break
-
-            # conn.close()
-            # print('Conexión cerrada')
-run_server_udp()
+# run_server_udp()

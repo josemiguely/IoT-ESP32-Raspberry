@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-
+ 
 static const char *TAG4 = "example";
 
 //Simulación Sensores

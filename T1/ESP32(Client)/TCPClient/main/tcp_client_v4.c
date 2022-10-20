@@ -48,25 +48,8 @@ char *payload;
 // extern 
 
 
-void tcp_client(void) //Se deberia llamar tcp_udp_client()
+void tcp_udp_client(void) //Se deberia llamar tcp_udp_client()
 {   
-    //Mandar a pedir a rasbperry configuración inicial...
-
-
-    //Obtener protocolo y Tlayer....
-
-
-
-
-    //Ejecutar TCP o UDP...
-
-    //
-
-
-
-
-
-
     char rx_buffer[128];
     char host_ip[] = HOST_IP_ADDR;
     int addr_family = 0;
@@ -74,7 +57,7 @@ void tcp_client(void) //Se deberia llamar tcp_udp_client()
 
     unsigned short msg_total_length[6] = {12+6, 12+16, 12+20, 12+44, 12+24016};
     
-    while (1) {
+    
 #if defined(CONFIG_EXAMPLE_IPV4)
         struct sockaddr_in dest_addr;
         inet_pton(AF_INET, host_ip, &dest_addr.sin_addr);
@@ -87,14 +70,79 @@ void tcp_client(void) //Se deberia llamar tcp_udp_client()
         ESP_ERROR_CHECK(get_addr_from_stdin(PORT, SOCK_STREAM, &ip_protocol, &addr_family, &dest_addr));
 #endif
 
-        int sock =  socket(addr_family, SOCK_STREAM, ip_protocol);
+
+        //Mandamos a pedir a rasbperry configuración inicial...
+    
+        ESP_LOGI(TAG, "=====Creando socket de main...====="); 
+    
+        int sock_main =  socket(addr_family, SOCK_STREAM, ip_protocol);
+        if (sock_main < 0) {
+            ESP_LOGE(TAG, "Unable to create main socket: errno %d", errno);
+            // break;
+        }
+        ESP_LOGI(TAG, "=====Main socket created, connecting to %s:%d=====", host_ip, PORT); //Corregir host_ip, PORT si no funciona
+
+        
+        int err1 = connect(sock_main, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+        if (err1 != 0) {
+            ESP_LOGE(TAG, "=====Main socket unable to connect: errno %d======", errno);
+            // break;
+        }
+        ESP_LOGI(TAG, "=====Main socket Successfully connected=====");
+        //uint64_t timer = 60;
+
+
+        char* solicitud="\0";
+        //Enviamos un 0 para pedirle la configuracion al Raspberry
+        ESP_LOGI(TAG, "=====Enviando mensaje de solicitud de configuracion a Raspberry=====");
+        int err2 = send(sock_main, solicitud, 1, 0);
+        ESP_LOGI(TAG, "=====Se envio mensaje de solicitud = %s, de configuracion a Raspberry=====",solicitud);
+
+        //Recuperamos configuracion de Raspberry
+        int len = recv(sock_main, rx_buffer, sizeof(rx_buffer) - 1, 0);
+        ESP_LOGI(TAG, "=====Recupero mensaje configuracion de Raspberry=====");
+
+        rx_buffer[len] = 0;
+        char protocol = rx_buffer[0];
+        char transport_layer = rx_buffer[1];
+        ESP_LOGI(TAG, "=====Se recibio como protocol %c=====",protocol);
+        ESP_LOGI(TAG, "=====Se recibio como transport_layer %c=====",transport_layer);
+
+        ESP_LOGI(TAG, "=====Cerrando socket de main...====="); 
+        shutdown(sock_main, 0);
+        close(sock_main);
+        ESP_LOGI(TAG, "=====Socket de main cerrado...====="); 
+
+
+        char host_ip_TCP[] = HOST_IP_ADDR;
+        int addr_family_TCP = 0;
+        int ip_protocol_TCP = 0;
+
+        #if defined(CONFIG_EXAMPLE_IPV4)
+        struct sockaddr_in dest_addr_TCP;
+        inet_pton(AF_INET, host_ip_TCP, &dest_addr_TCP.sin_addr);
+        dest_addr_TCP.sin_family = AF_INET;
+        dest_addr_TCP.sin_port = htons(PORT+1);
+        addr_family_TCP = AF_INET;
+        ip_protocol_TCP = IPPROTO_IP;
+#elif defined(CONFIG_EXAMPLE_SOCKET_IP_INPUT_STDIN)
+        struct sockaddr_storage dest_addr_TCP = { 0 };
+        ESP_ERROR_CHECK(get_addr_from_stdin(PORT+1, SOCK_STREAM, &ip_protocol_TCP, &addr_family_TCP, &dest_addr_TCP));
+#endif
+
+    while (1) {
+
+        if (transport_layer == '0'){
+        //Codigo TCP
+        ESP_LOGI(TAG, "=====Creando socket TCP en %s:%d=====", host_ip_TCP, (PORT+1));
+        int sock =  socket(addr_family_TCP, SOCK_STREAM, ip_protocol_TCP);
         if (sock < 0) {
             ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
             break;
         }
-        ESP_LOGI(TAG, "Socket created, connecting to %s:%d", host_ip, PORT);
+        ESP_LOGI(TAG, "Socket created, connecting to %s:%d", host_ip, (PORT+1));
 
-        int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+        int err = connect(sock, (struct sockaddr *)&dest_addr_TCP, sizeof(dest_addr_TCP));
         if (err != 0) {
             ESP_LOGE(TAG, "Socket unable to connect: errno %d", errno);
             break;
@@ -167,38 +215,12 @@ void tcp_client(void) //Se deberia llamar tcp_udp_client()
 
             free(payload);
     
-    
-    //
-            
-
-            /*else{
-
-            ESP_LOGE(TAG, "Enviando mensaje sin for...");
-            int err = send(sock, payload, largo_mensaje, 0);
-            if (err < 0) {
-                ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
-                break;
-            }
-
-            }*/
-
-            /*int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
-            // Error occurred during receiving
-            if (len < 0) {
-                ESP_LOGE(TAG, "recv failed: errno %d", errno);
-                break;
-            }
-            // Data received
-            else {
-                rx_buffer[len] = 0; // Null-terminate whatever we received and treat like a string
-                ESP_LOGI(TAG, "Received %d bytes from %s:", len, host_ip);
-                ESP_LOGI(TAG, "%s", rx_buffer);
-            }*/
-
         esp_sleep_enable_timer_wakeup(60*1000000);
         ESP_LOGI(TAG, "___delay de 60s___ ");
         //printf("___delay de 5s___ ");
        // ESP_LOGI(TAG, "durmiendo....");
+        shutdown(sock, 0);
+        close(sock);
         esp_deep_sleep_start();
         ESP_LOGI(TAG, "Sale del deep sleep");
         }
@@ -209,4 +231,17 @@ void tcp_client(void) //Se deberia llamar tcp_udp_client()
             close(sock);
         }
     }
+
+
+
+    else if (transport_layer == '1'){
+         ESP_LOGI(TAG, "=====Creando socket UDP en...=====");
+
+        
+
+
+
+    }
+
+}
 }

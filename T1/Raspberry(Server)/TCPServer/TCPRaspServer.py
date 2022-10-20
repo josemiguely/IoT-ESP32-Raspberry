@@ -22,12 +22,15 @@ def run_server_tcp():
 
     # "192.168.5.177"  # Standard loopback interface address (localhost)
     HOST = "192.168.4.1"#"localhost"
-    PORT = 10003  # Port to listen on (non-privileged ports are > 1023)
+    PORT = 10003+1  # Port to listen on (non-privileged ports are > 1023)
 
     s = socket.socket(socket.AF_INET, #internet
                     socket.SOCK_STREAM) #TCP
+    print("OPCION SOCKET DE APAGAR PUERTO")
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((HOST, PORT))
     s.listen(50)
+    
     print(f"Listening on {HOST}:{PORT}")
 
 
@@ -94,7 +97,7 @@ def run_server_tcp():
 
         conn.close()
         print('Conexión cerrada')
-        
+        break
 
 
-run_server_tcp()
+# run_server_tcp()

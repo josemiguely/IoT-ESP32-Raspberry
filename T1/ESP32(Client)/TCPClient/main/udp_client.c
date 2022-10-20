@@ -50,23 +50,11 @@ char *payload;
 
 static void udp_client_task(char protocol)//(void *pvParameters)
 {   
-
-    
-    
-    
-
-
-
-
     char rx_buffer[128];
     char host_ip[] = HOST_IP_ADDR;
     int addr_family = 0;
     int ip_protocol = 0;
-    /*char rx_buffer[128];
-    char host_ip[] = HOST_IP_ADDR;
-    int addr_family = 0;
-    int ip_protocol = 0;
-*/
+ 
     unsigned short msg_total_length[6] = {12+6, 12+16, 12+20, 12+44, 12+24016};
 
     while (1) {
