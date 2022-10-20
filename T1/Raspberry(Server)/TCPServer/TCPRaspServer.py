@@ -50,7 +50,7 @@ def run_server_tcp():
                 while True:
                 
                     try:
-                        conn.settimeout(15)
+                        #conn.settimeout(15)
                         data = conn.recv(1024)
                         if data == b'\0':
                             

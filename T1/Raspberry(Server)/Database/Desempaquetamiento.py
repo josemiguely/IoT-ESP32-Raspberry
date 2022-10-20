@@ -37,18 +37,10 @@ def parseData(packet):
         return (None,None)
 
     else:
-        print(headerD)
+        print(f" header es :{headerD}")
         dataD = dataDict(headerD["protocol"], data)
-        #if dataD is not None:
-        #    dataSave(headerD, dataD)
-        #print(header, data)
-        #return None if dataD is None else {**headerD, **dataD}
         return None if dataD is None else (headerD,dataD)
-
-    # protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf4800f"]
-    # protocol_unpack = ["<B", "<Bl", "<BlBfBf"]
-    
-
+ 
 def protUnpack(protocol:int, data):
     print(f"protUnpack bytes in data = {len(data)}")
 
@@ -64,8 +56,6 @@ def headerDict(data):
     print(f"bytes in header = {len(data)}")
     size=calcsize("<2s6BBBH")
     print(f"size of regex used= {size}")
-    # "<2s6B2BH"
-    # "<2s6BBB2B"
     ID_Dev,M1, M2, M3, M4, M5, M6, TransportL,ID_protocol, leng_msg = unpack("<2s6BBBH", data)
     
    
@@ -89,8 +79,7 @@ def dataDict(protocol, data):
     def protFunc(protocol, keys):
         def p(data):
             unp = protUnpack(protocol, data)
-            # print(unp)
-           
+            
             if (protocol==4):
                 
                 unp=list(unp)
@@ -121,7 +110,6 @@ def dataDict(protocol, data):
 
     try:
         data_dict = protFunc(protocol, p[protocol])(data)
-        # print(data_dict)
         return data_dict
     except Exception:
         print("Data unpacking Error:", traceback.format_exc())

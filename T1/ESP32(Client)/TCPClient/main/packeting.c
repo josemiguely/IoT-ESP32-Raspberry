@@ -1,4 +1,3 @@
-#include "packeting.h"
 #include "sensors.c"
 #include <stdlib.h>
 #include "esp_system.h"
@@ -19,7 +18,6 @@ int loop;
 
 unsigned short dataLength(char protocol){
     unsigned int uprotocol =((unsigned int) protocol)-48;
-    ESP_LOGI(TAG2,"======= uprotocol = %i", uprotocol);
 
     return lengmsg[uprotocol]-1;
 }

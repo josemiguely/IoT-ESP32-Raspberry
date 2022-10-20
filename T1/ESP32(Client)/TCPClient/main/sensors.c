@@ -1,10 +1,7 @@
 
-#include "sensors.h"
 #include <stdlib.h>
 #include <math.h>
 
-
-static const char *TAG4 = "example";
 
 //Simulación Sensores
 
@@ -28,10 +25,7 @@ float * acceloremeter_sensor_x(){
     for(int i = 0; i < 2000; i++){
         arr[i] = 2*sin(2*3.14*0.001*i);
     }
-    ESP_LOGE(TAG4, "float del acceloremeter de X10 %f \n", arr[10]);
-    ESP_LOGE(TAG4, "float del acceloremeter de X20 %f \n", arr[20]);
-    ESP_LOGE(TAG4, "float del acceloremeter de X26 %f \n", arr[26]);
-    ESP_LOGE(TAG4, "float del acceloremeter de X31 %f \n", arr[31]);
+   
     return arr;    
 }
 float * acceloremeter_sensor_y(){

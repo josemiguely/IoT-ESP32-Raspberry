@@ -33,11 +33,9 @@ while True:
     print(f"Esperando soliciud de configuracion en Main server...")
     #Parte de configuración
     initial_data = conn.recv(1024)
-    print(f"Llego solicitud de confiugracion :D")
+    print(f"Llego solicitud de configuracion :D")
     if initial_data == b'\0':
         (protocol,transportlayer)= DatabaseWork.getConfig()
-        print(f"protocolo de config MS {str(protocol)}")
-        print(f"transportlayer de config MS {str(transportlayer)}")
         config=((str(protocol)+str(transportlayer)).encode())
         conn.send(config)
         print("Configuración enviada desade Main Server :)")
@@ -54,8 +52,9 @@ while True:
             #Ejecutar server UDP
             print("Ejecutar server UDP desde Main")
             run_server_udp()
+            print("Terminando de ejecutar run_server_udp()")
     else:
-        print("No me llego soliticud configuración inical desde Main Server :(")
+        print("No me llego soliciticud configuración inical desde Main Server :(")
         conn.close()
-        print('Conexión cerrada')
+        print('Conexión cerrada de Main server')
     

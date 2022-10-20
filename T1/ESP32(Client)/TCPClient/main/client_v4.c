@@ -16,11 +16,6 @@
 #include "packeting.c"
           
 
-
-
-// extern void ESP_LOGI(const char* a, char* data, int* len, int err);
-// extern void ESP_LOGE(const char* a, char* data, int*len, int err);
-
 #if defined(CONFIG_EXAMPLE_SOCKET_IP_INPUT_STDIN)
 #include "addr_from_stdin.h"
 #endif
@@ -106,11 +101,6 @@ void tcp_udp_client(void) //Se deberia llamar tcp_udp_client()
         close(sock_main);
         ESP_LOGI(TAG, "=====Socket de main cerrado...====="); 
 
-
-       
-
-    
-
         if (transport_layer == '0'){ 
         tcp(protocol,transport_layer);
     }
@@ -120,7 +110,9 @@ void tcp_udp_client(void) //Se deberia llamar tcp_udp_client()
     else if (transport_layer == '1'){       
         udp(protocol,transport_layer);
     }
-
+    else{
+          ESP_LOGI(TAG, "===== No recibio transport layer ====="); 
+    }
     
 }
 
@@ -183,9 +175,7 @@ void tcp (char protocol,char transport_layer) {
                 int size = fmin(PACK_LEN, largo_mensaje - i);
                 char *pack = malloc(size);
                 memcpy(pack, &(payload[i]), size);
-                ESP_LOGE(TAG, "== size =  %i ==", size);
-                 ESP_LOGE(TAG, "== i = =  %i ==", i);
-
+                
                 //Enviamos el trozo
                 int err = send(sock, pack, size, 0);
                 ESP_LOGE(TAG, "== enviado un paquete  ==");
@@ -224,12 +214,12 @@ void tcp (char protocol,char transport_layer) {
 
             free(payload);
     
-        esp_sleep_enable_timer_wakeup(60*1000000);
-        ESP_LOGI(TAG, "___delay de 60s___ ");
-        shutdown(sock, 0);
-        close(sock);
-        esp_deep_sleep_start();
-        ESP_LOGI(TAG, "Sale del deep sleep");
+            esp_sleep_enable_timer_wakeup(60*1000000);
+            ESP_LOGI(TAG, "___delay de 60s___ ");
+            shutdown(sock, 0);
+            close(sock);
+            esp_deep_sleep_start();
+            ESP_LOGI(TAG, "Sale del deep sleep");
         }
 
         if (sock != -1) {
@@ -246,18 +236,14 @@ void udp (char protocol,char transport_layer){
 
     while (1) {
 
-    ESP_LOGI(TAG, "=====Esperemos 2 segundos antes de crear el cliente UDP...=====");
-        vTaskDelay(10000 / portTICK_PERIOD_MS);
-         ESP_LOGI(TAG, "=====Creando socket UDP en...=====");
+        //ESP_LOGI(TAG, "=====Esperemos 10 segundos antes de crear el cliente UDP...=====");
+        //vTaskDelay(10000 / portTICK_PERIOD_MS);
+        ESP_LOGI(TAG, "=====Creando socket UDP en...=====");
 
         // char rx_buffer_UDP[128];
         char host_ip_UDP[] = HOST_IP_ADDR;
         int addr_family_UDP = 0;
         int ip_protocol_UDP = 0;
-   
-
-        while (1) { // UDP?
-
         #if defined(CONFIG_EXAMPLE_IPV4)
                 struct sockaddr_in dest_addr_UDP;
                 dest_addr_UDP.sin_addr.s_addr = inet_addr(HOST_IP_ADDR);
@@ -277,13 +263,14 @@ void udp (char protocol,char transport_layer){
                 struct sockaddr_storage dest_addr_UDP = { 0 };
                 ESP_ERROR_CHECK(get_addr_from_stdin((PORT+2), SOCK_DGRAM, &ip_protocol_UDP, &addr_family_UDP, &dest_addr_UDP));
         #endif
-        
+        ESP_LOGE(TAG, "===== Creando socket ====");
         int sock_UDP = socket(addr_family_UDP, SOCK_DGRAM, ip_protocol_UDP);
+        ESP_LOGE(TAG, "===== socket creado ====");
         if (sock_UDP < 0) {
             ESP_LOGE(TAG, "Unable to create socket UDP: errno %d", errno);
-            break;
+            continue;
         }
-
+  
         // Set timeout
         struct timeval timeout;
         timeout.tv_sec = 10;
@@ -325,21 +312,25 @@ void udp (char protocol,char transport_layer){
             int err2 = sendto(sock_UDP, "\0", 1, 0,(struct sockaddr *)&dest_addr_UDP, sizeof(dest_addr_UDP));
             if (err2 < 0){
                 ESP_LOGE(TAG, "== Algo paso al enviar el fin de paquete 0: errno %d ==", err2);
+                break;
             }
             free(payload);
       
             ESP_LOGI(TAG, "Message UDP sent");
             vTaskDelay(10000 / portTICK_PERIOD_MS);
-           
+            break;
         }
 
-        if (sock_UDP != -1) {
-            ESP_LOGE(TAG, "Shutting down socket UDP and restarting...");
-            shutdown(sock_UDP, 0);
-            close(sock_UDP);
-        }
-    }
+       
+   // }
     
-    vTaskDelete(NULL);
-}
+    ESP_LOGE(TAG, "Shutting down socket UDP and restarting...");
+    //vTaskDelete(NULL);
+    esp_sleep_enable_timer_wakeup(5*1000000);
+    shutdown(sock_UDP, 0);
+    close(sock_UDP);
+    
+    esp_deep_sleep_start();
+    }
+        
 }

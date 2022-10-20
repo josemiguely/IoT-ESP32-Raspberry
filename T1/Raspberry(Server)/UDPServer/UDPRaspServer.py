@@ -48,6 +48,7 @@ def run_server_udp():
                 else:
                     DatabaseWork.dataSave(header,data)
                     DatabaseWork.saveLogs(header)
+                    break
                     
                     
 

@@ -17,7 +17,6 @@ def dataSave(header, data):
     protocol=header["protocol"]
     ts = tsNow()
     path=os.getcwd()
-    print(f" EL PATH PARA ABRIR ESTA EN {path}")
     try:
         sqliteConnection = sql.connect('./Database/DB.sqlite')
         cursor = sqliteConnection.cursor()
@@ -251,9 +250,6 @@ def saveLogs(header):
          
 def getConfig():
     try:
-        path=os.getcwd()
-        print(f" EL PATH PARA ABRIR ESTA EN {path}")
-        # conn = sql.connect('/Database/DB.sqlite')
         conn=sql.connect('./Database/DB.sqlite')
         
         cur = conn.cursor()
