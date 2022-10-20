@@ -1,4 +1,4 @@
-#include "sensors.c"
+#include "sensorsUDP.c"
 #include <math.h>
 #include <stdlib.h>
 #include "esp_system.h"
@@ -6,7 +6,7 @@
 #include "esp_log.h"
 #include "esp_event.h"
 #include "esp_sleep.h"
-#include "packeting.h"
+//#include "packeting.h"
 
 static const char *TAG13 = "example";
 

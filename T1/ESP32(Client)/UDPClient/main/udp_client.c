@@ -6,7 +6,7 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
-#include "udp_client.h"
+
 #include <string.h>
 #include <sys/param.h>
 #include "freertos/FreeRTOS.h"
@@ -20,14 +20,12 @@
 #include "esp_netif.h"
 #include "protocol_examples_common.h"
 #include <math.h>
-#include "udp_client.h"
 #include "lwip/err.h"
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
 #include <lwip/netdb.h>
 #include "addr_from_stdin.h"
-
-#include "packeting.c"
+#include "packetingUDP.c"
 
 #if defined(CONFIG_EXAMPLE_IPV4)
 #define HOST_IP_ADDR CONFIG_EXAMPLE_IPV4_ADDR

@@ -4,7 +4,7 @@ sys.path.insert(1, '../Database')
 import Desempaquetamiento
 import DatabaseWork
 
-def run_server_udp(void):
+def run_server_udp():
         UDP_IP = "192.168.4.1"# "localhost" 
         UDP_PORT = 10003
 
@@ -91,3 +91,4 @@ def run_server_udp(void):
 
             # conn.close()
             # print('Conexión cerrada')
+run_server_udp()
