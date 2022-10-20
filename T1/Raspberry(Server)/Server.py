@@ -43,7 +43,7 @@ while True:
         print("Configuración enviada desade Main Server :)")
         conn.close()
         print("Cerrando socket de main")
-        if transportlayer==0:
+        if transportlayer!=0: #Codigo malo, sustituir ! y colocar =
             #Ejecutar server TCP
             print("Ejecutar server TCP desde Main")
             run_server_tcp()

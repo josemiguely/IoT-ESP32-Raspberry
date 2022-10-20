@@ -6,7 +6,7 @@ import DatabaseWork
 
 def run_server_udp():
         UDP_IP = "192.168.4.1"# "localhost" 
-        UDP_PORT = 10003
+        UDP_PORT = 10003+2
 
 
         sUDP = socket.socket(socket.AF_INET, # Internet
@@ -48,7 +48,8 @@ def run_server_udp():
                 else:
                     DatabaseWork.dataSave(header,data)
                     DatabaseWork.saveLogs(header)
-                    break
+                    
+                    
 
             except Exception as e:
                     print("Oh no, ocurre una excepción en parseo/guardado UDP. Aquí va:")

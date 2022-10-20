@@ -5,7 +5,7 @@ import sqlite3 as sq
 
 
 insertar='''
-INSERT INTO Config (Id, ID_protocol, Transport_Layer)
+UPSERT INTO Config (Id, ID_protocol, Transport_Layer)
 VALUES (1,0,0);'''
 
 conn = sq.connect("DB.sqlite")

@@ -33,9 +33,10 @@ createLogs = '''CREATE TABLE Logs (
 );'''
 
 createConfig = '''CREATE TABLE Config (
-    Id INTEGER PRIMARY KEY,
+    Id INTEGER  PRIMARY KEY,
     ID_protocol INTEGER NOT NULL,
     Transport_Layer INTEGER NOT NULL
+    unique(Id,ID_protocol,Transport_Layer)
 );'''
 
 import sqlite3 as sql

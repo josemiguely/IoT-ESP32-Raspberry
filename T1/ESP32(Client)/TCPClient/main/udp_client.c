@@ -130,6 +130,7 @@ static void udp_client_task(char protocol)//(void *pvParameters)
             int err = sendto(sock, "\0", 1, 0,(struct sockaddr *)&dest_addr, sizeof(dest_addr));
 
             free(payload);
+            vTaskDelay(2000 / portTICK_PERIOD_MS);
            /* int err = sendto(sock, payload, strlen(payload), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
             if (err < 0) {
                 ESP_LOGE(TAG6, "Error occurred during sending: errno %d", errno);
@@ -157,7 +158,7 @@ static void udp_client_task(char protocol)//(void *pvParameters)
                 }
             }
 
-            vTaskDelay(2000 / portTICK_PERIOD_MS);*/
+            vTaskDelay(2000 / portTICK_PERIOD_MS);
         }
 
         if (sock != -1) {
