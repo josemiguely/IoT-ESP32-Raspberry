@@ -4,6 +4,12 @@ Para este proyecto se debe generar una red WiFi a través de una Raspberry Pi3, 
 
 En un ESP32 se debe programar un cliente TCP y un cliente UDP, el cuál va a generar datos que serán enviados a la Raspberry.
 
+# Integrantes:
+- Cristopher Alfaro
+- Javier Andrews
+- José Miguel Yuseff
+- Stevens Egli
+---
 
 
 # Instrucciones de uso
@@ -187,35 +193,3 @@ Para generar los datos se implementarán las siguientes funciones que emularán 
     - $Freq_z$ = valor aleatorio entre 89.0 y 91.0
 
     - $RMS = \sqrt{(Amp_x^2+Amp_y^2+Amp_z^2)}$
-
-
-
-## Forma de los paquetes
-
-### Header
-
-| ID Device | MAC | Transport Layer | ID Porotocol | Leng Msg |
-
-| -- | -- | -- | -- | -- |
-
-| 2 bytes | 6 bytes | 1 byte | 1 byte | 2 bytes |
-
-
-
-### Data
-
-| ID Protocol | Leng Msg (bytes) | Data 1 | Data 2 | Data 3 | Data 4 | Data 5 | Data 6 | Data 7 |
-
-| -- | --: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-
-| - | - | 1 byte | 1 byte | 4 bytes | 10 bytes | 4 bytes | 24 bytes | 24000 bytes |
-
-| 0 | 6 | Val: 1 | Batt level | Timestamp | - | - | - | - | - |
-
-| 1 | 16 | Val: 1 | Batt level | Timestamp | THPC Sensor | - | - | - |
-
-| 2 | 20 | Val: 1 | Batt level | Timestamp | THPC Sensor | RMS | - | - |
-
-| 3 | 44 | Val: 1 | Batt level | Timestamp | THPC Sensor | RMS | Accelometer kpi | - |
-
-| 4 | 24016 | Val: 1 | Batt level | Timestamp | THPC Sensor | RMS | - | Accelometer Sensor |
