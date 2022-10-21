@@ -1,13 +1,20 @@
-# Tarea1 IoT
+# Tarea 1 IoT
 Para este proyecto se debe generar una red WiFi a través de una Raspberry Pi3, luego génerar un server TCP y un server UDP y una base de datos donde almacenar los datos enviados por una ESP32.  
 En un ESP32 se debe programar un cliente TCP y un cliente UDP, el cuál va a generar datos que serán enviados a la Raspberry.
 
 # Instrucciones de uso
 ## ESP32
-
-
+Primero se debe ejecutar  ```idf.py build``` en el ESP32 para compilar el programa en un terminal dentro del directorio **Clients**, al mismo nivel que la carpeta **main**.  
+Luego de buildear en la Raspberry, ejecutar  en el mismo directorio
+```idf.py -p PUERTO flash monitor``` 
 ## Raspberry
 
+Ejecutar ```python sqlInit.py``` para crear la base de datos. Viene una configuración inicial para ser utilizada. Luego ejecutar ```python Server.py``` para ejecutar el servidor.
+
+### Comando para cambiar de protocolo/transport layer
+
+Para cambiar entre protocolo/transport layer se puede ejecutar el archivo updateConfig.py.
+Ejemplo de uso: ```python updateConfig.py <protocolo> <transport_layer>```. La variable protocol va entre 0 y 4 y para transport_layer entre 0 y 1 , siendo 0 TCP y 1 UDP.
 
 ---
 ## Estructura del Proyecto
@@ -19,9 +26,32 @@ Proyecto
 |              |--- UDP Server  
 |              |--- Database
 |  
-|--- ESP32-|---TCP Client
-           |---UDP Client  
+|--- ESP32-|---Clients
+           
 ```
+
+
+```client_main.c```: Se ecuentra dentro de la carpeta Clients y es el punto de entrada del cliente
+
+```client_v4.c```: Se ecuentra dentro de la carpeta Clients y se ejecuta un cliente TCP o UDP dependiendo de la configuración del servidor.
+
+
+```packeting.c```: Se ecuentra dentro de la carpeta Clients y realiza el empaquetado del mensaje de acuerdo al protocolo
+
+```sensors.c```: Se encuentra dentro de la carpeta Clienta y emula los sensores que serán enviados.
+
+```DatabaseWork.py```: Se encuentra dentro de la carpeta Raspberry/Database y se encarga de guardar la información en la base de datos DB.sqlite.
+
+```Desempaquetamiento.py```: Se encuentra dentro de la carpeta Raspberry/Database y se encarga de desempaquetar la información enviada por el cliente.
+
+```sqlInit.py```: Se encuentra dentro de la carpeta Raspberry/Database y se encarga de crear la base de datos.
+
+```updateConfig.py```: Se encuentra dentro de la carpeta Raspberry/Database y se encarga de modificar la configuración de protocolo y transportlayer.
+
+```TCPRaspServer.py```: Se encuentra dentro de la carpeta Raspberry/TCPServer y se encarga de crear un socket TCP que funciona como servidor.
+
+```UDPRaspServer.py```: Se encuentra dentro de la carpeta Raspberry/UDPServer y se encarga de crear un socket UDP que funciona como servidor.
+
 
 ## Flujo de datos
 1. El microcontrolador inicia a través de conexión TCP.
@@ -31,10 +61,7 @@ Proyecto
     - **En caso de usar UDP:** Se enviarán los datos sin parar hasta que el valor de *Transport_Layer* cambie, este deberá poder ser cambiado manualmente.
 4. Los paquetes recibidos por la Raspberry deberán ser abiertos y guardados dentro de una base de datos de SQL (SQLite).
 
-### Comando para cambiar de protocolo/transport layer
 
-Para cambiar entre protocolo/transport layer se puede ejecutar el archivo updateConfig.py.
-Ejemplo de uso: ```python updateConfig.py <protocolo> <transport_layer>```. La variable protocol va entre 0 y 4 y para transport_layer entre 0 y 1 , siendo 0 TCP y 1 UDP.
 
 
 ## Base de datos
@@ -75,7 +102,7 @@ Para generar los datos se implementarán las siguientes funciones que emularán 
 
 ### Data
 | ID Protocol | Leng Msg (bytes) | Data 1 | Data 2 | Data 3 | Data 4 | Data 5 | Data 6 | Data 7 |
-| -- | -- | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
+| -- | --: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
 | - | - | 1 byte | 1 byte | 4 bytes | 10 bytes | 4 bytes | 24 bytes | 24000 bytes |
 | 0 | 6 | Val: 1 | Batt level | Timestamp | - | - | - | - | - |
 | 1 | 16 | Val: 1 | Batt level | Timestamp | THPC Sensor | - | - | - |
