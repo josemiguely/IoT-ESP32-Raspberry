@@ -17,8 +17,9 @@ unsigned short lengmsg[6] = {6, 16, 20, 44, 24016};
 int loop;
 
 unsigned short dataLength(char protocol){
+    //ESP_LOGI(TAG2, " protocol EN DATALENGTH = %c\n", protocol);
     unsigned int uprotocol =((unsigned int) protocol)-48;
-
+     //ESP_LOGI(TAG2, " uprotocol EN DATALENGTH = %u\n", uprotocol);
     return lengmsg[uprotocol]-1;
 }
 
@@ -28,7 +29,8 @@ unsigned short messageLength(char protocol){
 
 //Genera el header de un mensaje, con la MAC, el protocolo, status, y el largo del mensaje.
 char* header(char protocol, char transportLayer){
-	char* head = malloc(12);
+	//ESP_LOGI(TAG2, " protocol HEADER = %c\n", protocol);
+    char* head = malloc(12);
     
     char * ID = "D1"; 
     memcpy((void*) &(head[0]), (void*) ID, 2);
@@ -41,7 +43,7 @@ char* header(char protocol, char transportLayer){
     head[8]= transportLayer;
 	head[9]= protocol;
    
-
+    
 	unsigned short dataLen = dataLength(protocol);
 	memcpy((void*) &(head[10]), (void*) &dataLen, 2);
         
@@ -52,16 +54,16 @@ char* header(char protocol, char transportLayer){
 
 
 // Arma un paquete para el protocolo de inicio, que busca solo respuesta
-char* dataprotocol00(){
-    char* msg = malloc(dataLength(0));
-    msg[0] = 1;
-    return msg;
-}
+// char* dataprotocol00(){
+//     char* msg = malloc(dataLength(0));
+//     msg[0] = 1;
+//     return msg;
+// }
 
 // Arma un paquete para el protocolo 0, 6 bytes
 char* dataprotocol0(){
-    
-    char* msg = malloc(dataLength(0));
+    //ESP_LOGI(TAG2, " dataLength(0) = %hu\n", dataLength('0')); 
+    char* msg = malloc(dataLength('0'));
     char batt = batt_sensor();
     
 	msg[0] = '1'; // Val
@@ -76,8 +78,8 @@ char* dataprotocol0(){
 
 // Arma un paquete para el protocolo 1, 16 bytes
 char* dataprotocol1(){
-    
-    char* msg = malloc(dataLength(1));
+    //ESP_LOGI(TAG2, " dataLength(1) = %hu\n", dataLength('1')); 
+    char* msg = malloc(dataLength('1'));
 
     char batt = batt_sensor();
     msg[0] = '1'; // Val
@@ -104,8 +106,8 @@ char* dataprotocol1(){
 
 // Arma un paquete para el protocolo 2, 20 bytes
 char* dataprotocol2(){
-    
-    char* msg = malloc(dataLength(2));
+    //ESP_LOGI(TAG2, " dataLength(2) = %hu\n", dataLength('2')); 
+    char* msg = malloc(dataLength('2'));
 
     char batt = batt_sensor();
     msg[0] = '1'; // Val
@@ -136,7 +138,7 @@ char* dataprotocol2(){
 // Arma un paquete para el protocolo 3, 44 bytes
 char* dataprotocol3() {
        
-    char* msg = malloc(dataLength(3));
+    char* msg = malloc(dataLength('3'));
 
     char batt = batt_sensor();
     msg[0] = '1'; // Val
@@ -177,7 +179,7 @@ char* dataprotocol3() {
 
     float frecz = accelerometer_kpi_frec_z();
     memcpy((void*) &(msg[40]), (void*) &frecz, 4);
-
+      
     return msg; 
     
 }
@@ -185,7 +187,7 @@ char* dataprotocol3() {
 // Arma un paquete para el protocolo 4, 24016 bytes
 char * dataprotocol4(){
            
-    char* msg = malloc(dataLength(4));
+    char* msg = malloc(dataLength('4'));
 
     char batt = batt_sensor();
     msg[0] = '1'; // Val
@@ -222,6 +224,7 @@ char * dataprotocol4(){
 char* mensaje (char protocol, char transportLayer){
      time_t t;
      int intprotocol = ((unsigned int) protocol)-48;
+    //ESP_LOGI(TAG2, " protocol in mensaje = %c\n", protocol); 
    
     /* Intializes random number generator */
     srand((unsigned) time(&t));
@@ -231,34 +234,36 @@ char* mensaje (char protocol, char transportLayer){
 	char* hdr = header(protocol, transportLayer);
     char* data;
 	switch (intprotocol) {
-		case 0:
-            ESP_LOGI(TAG2,"======= dataprotocol0 ====");
+		
+        case 0:
+            //ESP_LOGI(TAG2,"======= dataprotocol0 ====");
 			data = dataprotocol0();
+            //ESP_LOGI(TAG2,"======= se salio de dataprotocol0 ====");
             break;
 		case 1:
-            ESP_LOGI(TAG2,"======= dataprotocol1 ====");
+           // ESP_LOGI(TAG2,"======= dataprotocol1 ====");
 			data = dataprotocol1();
             
 			break;
 		case 2:
-            ESP_LOGI(TAG2,"======= dataprotocol2 ====");
+           // ESP_LOGI(TAG2,"======= dataprotocol2 ====");
 			data = dataprotocol2();
             
 			break;
         case 3:
-            ESP_LOGI(TAG2,"======= dataprotocol3 ====");
+           // ESP_LOGI(TAG2,"======= dataprotocol3 ====");
 			data = dataprotocol3();
             
 			break;
         case 4:
-            ESP_LOGI(TAG2,"======= dataprotocol4 ====");
+           // ESP_LOGI(TAG2,"======= dataprotocol4 ====");
 			data = dataprotocol4();
             
 			break;
 		default:
-        ESP_LOGI(TAG2,"======= dataprotocol0 default ====");
-			data = dataprotocol0();
-			break;
+            //ESP_LOGI(TAG2,"======= dataprotocol0 default ====");
+            data = dataprotocol0();
+            break;
 	}
 	memcpy((void*) &(mnsj[0]), (void*) hdr, 12);
 	memcpy((void*) &(mnsj[12]), (void*) data, dataLength(protocol));

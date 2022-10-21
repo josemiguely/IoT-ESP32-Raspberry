@@ -63,7 +63,7 @@ float thcp_pres_sensor(){
 }
 
 float thcp_CO_sensor(){
-    float n = floatrand(30,2000);
+    float n = floatrand(30,200);
     return n;
 }
 
@@ -96,6 +96,7 @@ float accelerometer_kpi_amp_z() {
 }
 
 float accelerometer_kpi_frec_z() {
+    
     return floatrand(89.0,91.0);
 }
 

@@ -63,7 +63,7 @@ char* dataprotocol00(){
 
 // Arma un paquete para el protocolo 0, 6 bytes
 char* dataprotocol0(){
-    
+    ESP_LOGI(TAG13, " dataLength(0) = %hu\n", dataLength(0)); 
     char* msg = malloc(dataLength(0));
     char batt = batt_sensor();
     

@@ -61,14 +61,14 @@ void tcp_udp_client(void) //Se deberia llamar tcp_udp_client()
 
         //Mandamos a pedir a rasbperry configuración inicial...
     
-        ESP_LOGI(TAG, "=====Creando socket de main...====="); 
+        //ESP_LOGI(TAG, "=====Creando socket de main...====="); 
     
         int sock_main =  socket(addr_family, SOCK_STREAM, ip_protocol);
         if (sock_main < 0) {
             ESP_LOGE(TAG, "Unable to create main socket: errno %d", errno);
             // break;
         }
-        ESP_LOGI(TAG, "=====Main socket created, connecting to %s:%d=====", host_ip, PORT); //Corregir host_ip, PORT si no funciona
+        //ESP_LOGI(TAG, "=====Main socket created, connecting to %s:%d=====", host_ip, PORT); //Corregir host_ip, PORT si no funciona
 
         
         int err1 = connect(sock_main, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
@@ -91,15 +91,15 @@ void tcp_udp_client(void) //Se deberia llamar tcp_udp_client()
         ESP_LOGI(TAG, "=====Recupero mensaje configuracion de Raspberry=====");
 
         rx_buffer[len] = 0;
-        char protocol = rx_buffer[0];
+        char protocol =  rx_buffer[0];
         char transport_layer = rx_buffer[1];
-        ESP_LOGI(TAG, "=====Se recibio como protocol %c=====",protocol);
-        ESP_LOGI(TAG, "=====Se recibio como transport_layer %c=====",transport_layer);
+        //ESP_LOGI(TAG, "=====Se recibio como protocol %c=====",protocol);
+        //ESP_LOGI(TAG, "=====Se recibio como transport_layer %c=====",transport_layer);
 
-        ESP_LOGI(TAG, "=====Cerrando socket de main...====="); 
+        //ESP_LOGI(TAG, "=====Cerrando socket de main...====="); 
         shutdown(sock_main, 0);
         close(sock_main);
-        ESP_LOGI(TAG, "=====Socket de main cerrado...====="); 
+        //ESP_LOGI(TAG, "=====Socket de main cerrado...====="); 
 
         if (transport_layer == '0'){ 
         tcp(protocol,transport_layer);
@@ -110,8 +110,9 @@ void tcp_udp_client(void) //Se deberia llamar tcp_udp_client()
     else if (transport_layer == '1'){       
         udp(protocol,transport_layer);
     }
-    else{
-          ESP_LOGI(TAG, "===== No recibio transport layer ====="); 
+    else
+    {
+        ESP_LOGI(TAG, "===== No recibio transport layer ====="); 
     }
     
 }
@@ -139,33 +140,34 @@ void tcp (char protocol,char transport_layer) {
 
 
         //Codigo TCP
-        ESP_LOGI(TAG, "=====Creando socket TCP en %s:%d=====", host_ip_TCP, (PORT+1));
+        //ESP_LOGI(TAG, "=====Creando socket TCP en %s:%d=====", host_ip_TCP, (PORT+1));
         int sock =  socket(addr_family_TCP, SOCK_STREAM, ip_protocol_TCP);
         if (sock < 0) {
             ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
             break;
         }
-        ESP_LOGI(TAG, "Socket created, connecting to %s:%d", host_ip_TCP, (PORT+1));
+        //ESP_LOGI(TAG, "Socket created, connecting to %s:%d", host_ip_TCP, (PORT+1));
 
         int err = connect(sock, (struct sockaddr *)&dest_addr_TCP, sizeof(dest_addr_TCP));
         if (err != 0) {
-            ESP_LOGE(TAG, "Socket unable to connect: errno %d", errno);
+            //ESP_LOGE(TAG, "Socket unable to connect: errno %d", errno);
             break;
         }
-        ESP_LOGI(TAG, "Successfully connected");
+        //ESP_LOGI(TAG, "Successfully connected");
         //uint64_t timer = 60;
 
         while (1) {
 
 
             ESP_LOGE(TAG, "Creando mensaje...\n");
+            //ESP_LOGE(TAG, "PROTOCOLO QUE LE MANDAMOS A MENSAJE %c...\n",protocol);
             payload = mensaje(protocol,transport_layer);
             ESP_LOGE(TAG, "Mensaje del protocolo %c creado :D...\n",protocol);
            
             int largo_mensaje= msg_total_length[((int) protocol)-48];
-            ESP_LOGI(TAG,"======= Mensaje Length = %i\n", largo_mensaje);
+            //ESP_LOGI(TAG,"======= Mensaje Length = %i\n", largo_mensaje);
              
-            printf("Sending!\n");
+            //printf("Sending!\n");
             char rx_buffer[128];
 
             for (int i = 0; i < largo_mensaje; i += PACK_LEN)
@@ -178,7 +180,7 @@ void tcp (char protocol,char transport_layer) {
                 
                 //Enviamos el trozo
                 int err = send(sock, pack, size, 0);
-                ESP_LOGE(TAG, "== enviado un paquete  ==");
+                //ESP_LOGI(TAG, "== enviado un paquete  ==");
                 free(pack);
                 if (err < 0)
                 {
@@ -187,7 +189,7 @@ void tcp (char protocol,char transport_layer) {
 
                 // wait for confirmation
                 int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
-                ESP_LOGE(TAG, "== len que llega %i ==", len);
+                //ESP_LOGE(TAG, "== len que llega %i ==", len);
                 // Error occurred during receiving
                 if (len < 0)
                 {
@@ -199,7 +201,7 @@ void tcp (char protocol,char transport_layer) {
                 {
                     rx_buffer[len] = 0;
                     char OK_r = rx_buffer[0];
-                     ESP_LOGE(TAG, "== OK que llega %c ==", OK_r);
+                     //ESP_LOGE(TAG, "== OK que llega %c ==", OK_r);
                     if (!OK_r)
                     {
                         ESP_LOGE(TAG, "== Server error in fragmented send. ==");
@@ -215,11 +217,11 @@ void tcp (char protocol,char transport_layer) {
             free(payload);
     
             esp_sleep_enable_timer_wakeup(60*1000000);
-            ESP_LOGI(TAG, "___delay de 60s___ ");
+            ESP_LOGI(TAG, "Deep sleep de 60 segundos iniciado");
             shutdown(sock, 0);
             close(sock);
             esp_deep_sleep_start();
-            ESP_LOGI(TAG, "Sale del deep sleep");
+            //ESP_LOGI(TAG, "Sale del deep sleep");
         }
 
         if (sock != -1) {
@@ -238,7 +240,7 @@ void udp (char protocol,char transport_layer){
 
         //ESP_LOGI(TAG, "=====Esperemos 10 segundos antes de crear el cliente UDP...=====");
         //vTaskDelay(10000 / portTICK_PERIOD_MS);
-        ESP_LOGI(TAG, "=====Creando socket UDP en...=====");
+        //ESP_LOGI(TAG, "=====Creando socket UDP en...=====");
 
         // char rx_buffer_UDP[128];
         char host_ip_UDP[] = HOST_IP_ADDR;
@@ -263,9 +265,9 @@ void udp (char protocol,char transport_layer){
                 struct sockaddr_storage dest_addr_UDP = { 0 };
                 ESP_ERROR_CHECK(get_addr_from_stdin((PORT+2), SOCK_DGRAM, &ip_protocol_UDP, &addr_family_UDP, &dest_addr_UDP));
         #endif
-        ESP_LOGE(TAG, "===== Creando socket ====");
+        //ESP_LOGE(TAG, "===== Creando socket ====");
         int sock_UDP = socket(addr_family_UDP, SOCK_DGRAM, ip_protocol_UDP);
-        ESP_LOGE(TAG, "===== socket creado ====");
+        //ESP_LOGE(TAG, "===== socket creado ====");
         if (sock_UDP < 0) {
             ESP_LOGE(TAG, "Unable to create socket UDP: errno %d", errno);
             continue;
@@ -282,13 +284,13 @@ void udp (char protocol,char transport_layer){
 
         while (1) {
             
-            ESP_LOGE(TAG, "Creando mensaje UDP...\n");
+            //ESP_LOGE(TAG, "Creando mensaje UDP...\n");
 
             int largo_mensaje= msg_total_length[((int) protocol)-48];
-            ESP_LOGI(TAG,"======= Mensaje Length UDP = %i\n", largo_mensaje);
+            //ESP_LOGI(TAG,"======= Mensaje Length UDP = %i\n", largo_mensaje);
             
             payload = mensaje(protocol,transport_layer);
-            ESP_LOGE(TAG, "Mensaje del protocolo UDP %c creado :D...\n",protocol);
+            //ESP_LOGE(TAG, "Mensaje del protocolo UDP %c creado :D...\n",protocol);
 
 
             for (int i = 0 ; i<largo_mensaje ; i+= PACK_LEN){
@@ -316,7 +318,7 @@ void udp (char protocol,char transport_layer){
             }
             free(payload);
       
-            ESP_LOGI(TAG, "Message UDP sent");
+            //ESP_LOGI(TAG, "Message UDP sent");
             vTaskDelay(10000 / portTICK_PERIOD_MS);
             break;
         }
@@ -324,7 +326,7 @@ void udp (char protocol,char transport_layer){
        
    // }
     
-    ESP_LOGE(TAG, "Shutting down socket UDP and restarting...");
+    //ESP_LOGE(TAG, "Shutting down socket UDP and restarting...");
     //vTaskDelete(NULL);
     esp_sleep_enable_timer_wakeup(5*1000000);
     shutdown(sock_UDP, 0);

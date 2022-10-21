@@ -26,7 +26,6 @@ def run_server_tcp():
 
     s = socket.socket(socket.AF_INET, #internet
                     socket.SOCK_STREAM) #TCP
-    print("OPCION SOCKET DE APAGAR PUERTO")
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((HOST, PORT))
     s.listen(50)
@@ -71,7 +70,7 @@ def run_server_tcp():
                 
                 
                 ##TERMINO CODIGO AUX
-                print("Llego data :D")
+                #print("Llego data :D")
                 if doc == b'':
                     print("Llego data vacía, termina la conexión")
                     break
