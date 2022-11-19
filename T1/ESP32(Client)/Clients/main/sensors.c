@@ -45,6 +45,36 @@ float * acceloremeter_sensor_z(){
     return arr; 
 }
 
+
+float * rgyr_x(){
+    float* arr = malloc(2000 * sizeof(float));
+    for(int i = 0; i < 2000; i++){
+        floatrand(-1000,1000);
+    }
+   
+    return arr;    
+}
+
+float * rgyr_y(){
+    float* arr = malloc(2000 * sizeof(float));
+    for(int i = 0; i < 2000; i++){
+        floatrand(-1000,1000);
+    }
+   
+    return arr;    
+}
+
+
+float * rgyr_z(){
+    float* arr = malloc(2000 * sizeof(float));
+    for(int i = 0; i < 2000; i++){
+        arr[i] = floatrand(-1000,1000);
+    }
+   
+    return arr;    
+}
+
+
 //THCP_Sensor
 
 char thcp_temp_sensor(){
