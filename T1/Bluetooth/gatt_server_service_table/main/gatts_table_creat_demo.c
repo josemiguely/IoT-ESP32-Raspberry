@@ -29,12 +29,12 @@
 #include "gatts_table_creat_demo.h"
 #include "esp_gatt_common_api.h"
 
-#define GATTS_TABLE_TAG "GATTS_TABLE_DEMO"
+#define GATTS_TABLE_TAG "GATO_BAKAN_ESP"
 
 #define PROFILE_NUM                 1
 #define PROFILE_APP_IDX             0
 #define ESP_APP_ID                  0x55
-#define SAMPLE_DEVICE_NAME          "ESP_GATTS_DEMO"
+#define SAMPLE_DEVICE_NAME          "GATO_BAKAN"
 #define SVC_INST_ID                 0
 
 /* The max length of characteristic value. When the GATT client performs a write or prepare write operation,
@@ -68,7 +68,7 @@ static uint8_t raw_adv_data[] = {
         /* service uuid */
         0x03, 0x03, 0xFF, 0x00,
         /* device name */
-        0x0f, 0x09, 'E', 'S', 'P', '_', 'G', 'A', 'T', 'T', 'S', '_', 'D','E', 'M', 'O'
+        0x0b, 0x09, 'G', 'A', 'T', 'O', '_', 'B', 'A', 'K', 'A', 'N'
 };
 static uint8_t raw_scan_rsp_data[] = {
         /* flags */
@@ -169,7 +169,15 @@ static const uint8_t char_prop_read                =  ESP_GATT_CHAR_PROP_BIT_REA
 static const uint8_t char_prop_write               = ESP_GATT_CHAR_PROP_BIT_WRITE;
 static const uint8_t char_prop_read_write_notify   = ESP_GATT_CHAR_PROP_BIT_WRITE | ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
 static const uint8_t heart_measurement_ccc[2]      = {0x00, 0x00};
-static const uint8_t char_value[4]                 = {0x11, 0x22, 0x33, 0x44};
+static const uint8_t char_valueA[4]                 = {0x11, 0x22, 0x33, 0x44};
+static const uint8_t char_valueB[5]                 = {'C', 'A', 'R', 'B','\0'};
+static const uint8_t char_valueC[5]                 = {'C', 'A', 'R', 'C','\0'};
+
+
+//La primera característica es la posicion 4 de python.
+//es la 4 en la lista de python
+//es la 5 en la lista de python
+//es la 6 en la lista de python
 
 
 /* Full Database Description - Used to add attributes into the database */
@@ -188,7 +196,7 @@ static const esp_gatts_attr_db_t gatt_db[HRS_IDX_NB] =
     /* Characteristic Value */
     [IDX_CHAR_VAL_A] =
     {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&GATTS_CHAR_UUID_TEST_A, ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,
-      GATTS_DEMO_CHAR_VAL_LEN_MAX, sizeof(char_value), (uint8_t *)char_value}},
+      GATTS_DEMO_CHAR_VAL_LEN_MAX, sizeof(char_valueA), (uint8_t *)char_valueA}},
 
     /* Client Characteristic Configuration Descriptor */
     [IDX_CHAR_CFG_A]  =
@@ -203,7 +211,7 @@ static const esp_gatts_attr_db_t gatt_db[HRS_IDX_NB] =
     /* Characteristic Value */
     [IDX_CHAR_VAL_B]  =
     {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&GATTS_CHAR_UUID_TEST_B, ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,
-      GATTS_DEMO_CHAR_VAL_LEN_MAX, sizeof(char_value), (uint8_t *)char_value}},
+      GATTS_DEMO_CHAR_VAL_LEN_MAX, sizeof(char_valueB), (uint8_t *)char_valueB}},
 
     /* Characteristic Declaration */
     [IDX_CHAR_C]      =
@@ -213,7 +221,7 @@ static const esp_gatts_attr_db_t gatt_db[HRS_IDX_NB] =
     /* Characteristic Value */
     [IDX_CHAR_VAL_C]  =
     {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&GATTS_CHAR_UUID_TEST_C, ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,
-      GATTS_DEMO_CHAR_VAL_LEN_MAX, sizeof(char_value), (uint8_t *)char_value}},
+      GATTS_DEMO_CHAR_VAL_LEN_MAX, sizeof(char_valueC), (uint8_t *)char_valueC}},
 
 };
 
@@ -252,6 +260,7 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
             if (param->adv_start_cmpl.status != ESP_BT_STATUS_SUCCESS) {
                 ESP_LOGE(GATTS_TABLE_TAG, "advertising start failed");
             }else{
+                ESP_LOGI(GATTS_TABLE_TAG, "gato bkn 😼");
                 ESP_LOGI(GATTS_TABLE_TAG, "advertising start successfully");
             }
             break;
@@ -383,8 +392,24 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 // the data length of gattc write  must be less than GATTS_DEMO_CHAR_VAL_LEN_MAX.
                 ESP_LOGI(GATTS_TABLE_TAG, "GATT_WRITE_EVT, handle = %d, value len = %d, value :", param->write.handle, param->write.len);
                 esp_log_buffer_hex(GATTS_TABLE_TAG, param->write.value, param->write.len);
+                
+
+                char* configuration = (char *) malloc(sizeof(char)*param->write.len);
+
+                //Imprimos el mensaje que llega y guardamos configuracion
+                for (int i=0;i<param->write.len;i++) {
+                    ESP_LOGI(GATTS_TABLE_TAG,"%c",param->write.value[i]);
+                    configuration[i] = param->write.value[i];
+                }
+
+
+
+
+                ESP_LOGI(GATTS_TABLE_TAG,"----WRITE EVENT ANTES DE UN IF EXTRANO------");
+                
                 if (heart_rate_handle_table[IDX_CHAR_CFG_A] == param->write.handle && param->write.len == 2){
                     uint16_t descr_value = param->write.value[1]<<8 | param->write.value[0];
+                    
                     if (descr_value == 0x0001){
                         ESP_LOGI(GATTS_TABLE_TAG, "notify enable");
                         uint8_t notify_data[15];

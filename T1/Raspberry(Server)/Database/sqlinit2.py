@@ -49,7 +49,7 @@ CREATE TABLE Log (
   `Id_device` INT ,
   `Status_report` INT ,
   `Protocol_report` INT ,
-  `Battery Level` INT NULL,
+  `Battery_Level` INT NULL,
   `Conf_peripheral` INT NULL,
   `Time_client` DATETIME ,
   `Time_server` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
