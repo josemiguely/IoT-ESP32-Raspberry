@@ -27,8 +27,19 @@ void app_main(void)
     //  */
     ESP_ERROR_CHECK(example_connect());
 
+
+    
+    // if no hay configuracion prender bluetooth y recuperar informacion
+
+
+    
+    //else Recuperar información en memoria no volatil
+
+    
+    // De acuerdo a informacion en no volatil ejecutar wifi o bluetooth.
+
     ESP_LOGI(TAG21, "=====Ejecutando tcp_udp_client...=====");
     tcp_udp_client(); 
-
+    // llamar a blutu
 
 }

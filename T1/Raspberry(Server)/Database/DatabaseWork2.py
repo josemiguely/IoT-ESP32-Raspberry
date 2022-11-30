@@ -30,8 +30,9 @@ def dataSave(header, data):
     if  protocol == 0:
         print("Entró protocolo 0 en dataSave")
         # Tabla Datos
+        '''
         try:
-
+            
             sqlite_insert_with_param = """
             INSERT INTO Data_1 (
             Id_device,
@@ -48,7 +49,7 @@ def dataSave(header, data):
             print("Error al insertar en protocolo 0",error)
         finally:
             if sqliteConnection:
-                sqliteConnection.close()
+                sqliteConnection.close()'''
 
     elif protocol == 1:
     # Tabla Datos
@@ -56,14 +57,13 @@ def dataSave(header, data):
             print("Entró protocolo 1 en dataSave")
             sqlite_insert_with_param = """
             INSERT INTO Data_1 (
-            Id_device,
             Temperature,
             Press,
             Hum,
             Co,
-            Time_client) VALUES(?, ?, ?, ?, ?,?);"""
+            Time_client) VALUES(?, ?, ?, ?,?);"""
             ## Poner la configuracion segun el parser
-            data_tuple = (header["ID_Dev"],data["Temp"], data["Press"], data["Hum"],data["Co"],data["Timestamp"])
+            data_tuple = (data["Temp"], data["Press"], data["Hum"],data["Co"],data["Timestamp"])
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
             
@@ -81,14 +81,13 @@ def dataSave(header, data):
             
             sqlite_insert_with_param = """
             INSERT INTO Data_1 (
-            Id_device,
             Temperature,
             Press,
             Hum,
             Co,
             RMS,
-            Time_client) VALUES(?, ?, ?, ?, ?,?,?);"""
-            data_tuple = (header["ID_Dev"],data["Temp"], data["Press"], data["Hum"],data["Co"],data["RMS"],data["Timestamp"])
+            Time_client) VALUES(?, ?, ?, ?,?,?);"""
+            data_tuple = (data["Temp"], data["Press"], data["Hum"],data["Co"],data["RMS"],data["Timestamp"])
            
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
@@ -105,7 +104,6 @@ def dataSave(header, data):
             
             sqlite_insert_with_param = """
             INSERT INTO Data_1 (
-            Id_device,
             Temperature,
             Press,
             Hum,
@@ -117,8 +115,8 @@ def dataSave(header, data):
             Freq_y,
             Amp_z,
             Freq_z,
-            Time_client) VALUES(?, ?, ?, ?, ?,?,?,?,?,?,?,?,?);"""
-            data_tuple = (header["ID_Dev"],data["Temp"], data["Press"], 
+            Time_client) VALUES(?, ?, ?, ?,?,?,?,?,?,?,?,?);"""
+            data_tuple = (data["Temp"], data["Press"], 
                         data["Hum"],data["Co"],data["RMS"],data["Ampx"],
                         data["Frecx"],data["Ampy"],data["Frecy"],data["Ampz"],
                         data["Frecz"],data["Timestamp"])
@@ -139,29 +137,27 @@ def dataSave(header, data):
 
             sqlite_insert_with_param1 = """
             INSERT INTO Data_1 (
-            Id_device,
             Temperature,
             Press,
             Hum,
             Co,
-            Time_client) VALUES(?, ?, ?, ?, ?,?);"""
+            Time_client) VALUES(?, ?, ?, ?,?);"""
             ## Poner la configuracion segun el parser
-            data_tuple1 =data_tuple = (header["ID_Dev"],data["Temp"], data["Press"],
+            data_tuple1 =data_tuple = (data["Temp"], data["Press"],
                                     data["Hum"],data["Co"],data["RMS"],data["Timestamp"])
             cursor.execute(sqlite_insert_with_param1, data_tuple1)
 
             sqlite_insert_with_param2 = """
             INSERT INTO Data_2 (
-            Id_device,
             Racc_x,
             Racc_y,
             Racc_z,
             Rgyr_x,
             Rgyr_y,
             Rgyr_z,
-            Time_client) VALUES(?, ?, ?, ?, ?, ?, ?,?);"""
+            Time_client) VALUES(?, ?, ?, ?, ?, ?,?);"""
             ## Poner la configuracion segun el parser
-            data_tuple2 = (header["ID_Dev"], data["Accx"], data["Accy"], data["Accz"],
+            data_tuple2 = (data["Accx"], data["Accy"], data["Accz"],
                            data["gyrx"], data["gyry"], data["gyrz"])
             cursor.execute(sqlite_insert_with_param2, data_tuple2)
 
