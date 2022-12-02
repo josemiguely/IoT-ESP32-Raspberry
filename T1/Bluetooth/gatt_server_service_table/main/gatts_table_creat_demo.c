@@ -724,9 +724,20 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
 
 
                 int8_t recieve_status = 0 ;
+                char recieve_wifi[wl+1];
+                char receive_pass[pl+1];
+                int8_t receive_id_protocol;
+                int32_t receive_acc_sampling ;
+                int32_t receive_acc_sensibility;
+                int32_t receive_gyro_sensibility;
+                int32_t receive_BME688_sampling;
+                int32_t receive_discontinous_time;
+                int32_t receive_port_tcp;
+                int32_t receive_port_udp ;
+                int32_t receive_host_ip;
 
                 // Read
-                printf("Reading restart recieve status from NVS ... ");
+                printf("Reading status from NVS ... ");
                 err = nvs_get_i8(my_handle, "status", &recieve_status);
                 switch (err) {
                     case ESP_OK:
@@ -740,11 +751,127 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                         printf("Error (%s) reading!\n", esp_err_to_name(err));
                 }
 
+                printf("Reading id protocol from NVS ...\n ");
+                err = nvs_get_i8(my_handle, "id_protocol", &receive_id_protocol);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("Restart recieve id_protocol = %d\n", receive_id_protocol);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+                
+                printf("Reading acc_sampling from NVS ... \n");
+                err = nvs_get_i32(my_handle, "acc_sampling", &receive_acc_sampling);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("Restart recieve acc_sampling = %ld\n", receive_acc_sampling);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+                printf("Reading receive_acc_sensibility from NVS ... \n");
+                err = nvs_get_i32(my_handle, "acc_sensibility", &receive_acc_sensibility);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("acc_sampling = %ld\n", receive_acc_sensibility);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+                printf("Reading gyro_sensibility from NVS ... \n");
+                err = nvs_get_i32(my_handle, "gyro_sensibility", &receive_gyro_sensibility);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("gyro_sensibility = %ld\n", receive_gyro_sensibility);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+                printf("Reading BME688_sampling from NVS ... \n");
+                err = nvs_get_i32(my_handle, "BME688_sampling", &receive_BME688_sampling);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("BME688_sampling = %ld\n", receive_BME688_sampling);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+                printf("Reading discontinous_time from NVS ... \n");
+                err = nvs_get_i32(my_handle, "discontinous_time", &receive_discontinous_time);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("discontinous_time = %ld\n", receive_discontinous_time);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+                printf("Reading port_tcp from NVS ... \n");
+                err = nvs_get_i32(my_handle, "port_tcp", &receive_port_tcp);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("port_tcp = %ld\n", receive_port_tcp);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+                printf("Reading port_udp from NVS ... \n");
+                err = nvs_get_i32(my_handle, "port_udp", &receive_port_udp);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("port_udp = %ld\n", receive_port_udp);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+                printf("Reading host_ip from NVS ... \n");
+                err = nvs_get_i32(my_handle, "host_ip", &receive_host_ip);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("host_ip = %ld\n", receive_host_ip);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
 
-                char recieve_wifi[wl+1];
-                //char* recieve_password;
                 // Read 
-                printf("Reading wifi strings from NVS ... ");
+                printf("Reading wifi strings from NVS ... \n");
                 size_t size = (size_t) (wl+1);
                 err = nvs_get_str(my_handle, "wifi_name", recieve_wifi,&size);
                 switch (err) {
@@ -758,6 +885,22 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                     default :
                         printf("Error (%s) reading!\n", esp_err_to_name(err));
                 }
+
+                printf("Reading password strings from NVS ... \n");
+                size_t size2 = (size_t) (pl+1);
+                err = nvs_get_str(my_handle, "password", receive_pass,&size2);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("Restart password = %s\n", receive_pass);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+
 
 
                 // Close
