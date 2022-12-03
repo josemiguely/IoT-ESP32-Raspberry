@@ -15,20 +15,20 @@
 ****************************************************************************/
 
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-#include "esp_system.h"
-#include "esp_log.h"
-#include "nvs_flash.h"
-#include "esp_bt.h"
+// #include "freertos/FreeRTOS.h"
+// #include "freertos/task.h"
+// #include "freertos/event_groups.h"
+// #include "esp_system.h"
+// #include "esp_log.h"
+// #include "nvs_flash.h"
+// #include "esp_bt.h"
 
-#include "esp_gap_ble_api.h"
-#include "esp_gatts_api.h"
-#include "esp_bt_main.h"
-#include "gatts_table_creat_demo.h"
-#include "esp_gatt_common_api.h"
-#include <string.h>
+// #include "esp_gap_ble_api.h"
+// #include "esp_gatts_api.h"
+// #include "esp_bt_main.h"
+// #include "gatts_table_creat_demo.h"
+// #include "esp_gatt_common_api.h"
+// #include <string.h>
 
 #define GATTS_TABLE_TAG "GATO_BAKAN_ESP"
 
@@ -487,10 +487,11 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 int32_t BME688_sampling;
                 int32_t discontinous_time;
                 int32_t port_tcp;
-                int32_t port_udp ;
+                int32_t port_udp;
                 int32_t host_ip;
                 int32_t wifi_len;
                 int32_t pass_len;
+                int8_t config_mode;
                 //char* wifi_name;
                 //char* password;
 
@@ -529,6 +530,8 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
 
                 memcpy(&pass_len,&configuration[38],4);
                 printf("pass_len = %i\n",(int)pass_len);
+
+
                 /* ME QUIERO MATAR */
                 int pl =  (int)pass_len;
                 int wl = (int)wifi_len ;
@@ -570,89 +573,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                    memcpy(&password[i],&configuration[n1+i],1);
                 }
                  printf("password = %s\n",password);
-                /*
-                for (int i = 0 ; i<12;i++){
-                    //conf_ptr = "";
-                    //strncpy()
-                    // for (int j = 0; j<config_sizes[i];j++){
-                       
-                    //     ESP_LOGI(GATTS_TABLE_TAG,"%s",conf_ptr[i]);
-                    //     conf_ptr[i] = *configuration;
-                    //     strncpy()
-                    //     configuration++;
-
-                    // }
-                    if (i == 0){
-                        //status = conf_ptr;
-                        strncpy(status,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"status=%x",status[3]);
-                        configuration+=config_sizes[i];}
-                    else if( i == 1){
-                        //id_protocol = conf_ptr;
-                        strncpy(id_protocol,configuration,config_sizes[i]);
-                       ESP_LOGI(GATTS_TABLE_TAG,"id_protocol=%x",id_protocol[3]);
-                        configuration+=config_sizes[i];}
-                    else if( i == 2){
-                        //acc_sampling = conf_ptr;
-                        strncpy(acc_sampling,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"acc_sampling=%x",acc_sampling[3]);
-                        configuration+=config_sizes[i];}
-                    else if( i == 3){
-                        //acc_sensibility = conf_ptr;
-                        strncpy(acc_sensibility,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"acc_sensibility=%x",acc_sensibility[3]);
-                        configuration+=config_sizes[i];}
-                    else if (i == 4){
-                        //gyro_sensibility = conf_ptr;
-                        strncpy(gyro_sensibility,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"gyro_sensibilitys=%x",gyro_sensibility[3]);
-                        configuration+=config_sizes[i];}
-                    else if( i == 5){
-                        //BME688_sampling = conf_ptr;
-                        strncpy(BME688_sampling,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"BME688_sampling=%x",BME688_sampling[3]);
-                        configuration+=config_sizes[i];}    
-                    else if( i == 6){
-                        //discontinous_time = conf_ptr;
-                        strncpy(discontinous_time,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"discontinous_time=%x",discontinous_time[3]);
-                        configuration+=config_sizes[i];}
-                    else if( i == 7){
-                        //port_tcp = conf_ptr;
-                        strncpy(port_tcp,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"port_tcp=%x",port_tcp[3]);
-                        configuration+=config_sizes[i];}
-                    else if( i == 8){
-                        //port_udp = conf_ptr;
-                        strncpy(port_udp,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"port_udp=%x",port_udp[3]);
-                        configuration+=config_sizes[i];}
-                    else if( i == 9){
-                        //host_ip = conf_ptr;
-                        strncpy(host_ip,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"host ip=%x",host_ip[3]);
-                        configuration+=config_sizes[i];}
-                    else if( i == 10){
-                        //wifi_name = conf_ptr;
-                        strncpy(wifi_name,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"wifi=%s",wifi_name);
-                        configuration+=config_sizes[i];}
-                        
-                    else if( i == 11){
-                        //password = conf_ptr;
-                        strncpy(password,configuration,config_sizes[i]);
-                        ESP_LOGI(GATTS_TABLE_TAG,"ps = %s",password);
-                        configuration+=config_sizes[i];}
-                    else
-                        ESP_LOGI(GATTS_TABLE_TAG,"ERROR FATAL");
-                   // ESP_LOGI(GATTS_TABLE_TAG, "%s",)
-                    
-                }
-                
-                 */
-                
-                // char* wifi_name2;
-                // char* password2; 
+   
 
                 char wifi_name2[wl+1]; //malloc(wl);
                 char password2[pl+1] ;//= malloc(pl); // char pass[pl];
@@ -660,6 +581,10 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 strncpy(password2, password,pl);
                 wifi_name2[wl] = '\0';
                 password2[pl] = '\0';
+
+                
+                config_mode = configuration[42+pl+wl];
+                printf("config_mode  = %i\n",(int)pass_len);
 
                 printf("wifi_name2 %s\n",wifi_name2);
                 printf("password2 %s\n",password2);
@@ -706,11 +631,11 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 nvs_set_i32(my_handle, "port_tcp", port_tcp);
                 nvs_set_i32(my_handle, "port_udp", port_udp);
                 nvs_set_i32(my_handle, "host_ip", host_ip);
-                //nvs_set_i32(my_handle, "wifi_len", wl);
-                //nvs_set_i32(my_handle, "pass_len", pl);
+                nvs_set_i32(my_handle, "wifi_len", wl);
+                nvs_set_i32(my_handle, "pass_len", pl);
                 nvs_set_str(my_handle, "wifi_name", wifi_name2);
                 nvs_set_str(my_handle, "password", password2);
-
+                nvs_set_i8(my_handle, "config_mode", config_mode);
 
 
                 printf((err != ESP_OK) ? "Failed!\n" : "Done\n");
@@ -735,6 +660,9 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 int32_t receive_port_tcp;
                 int32_t receive_port_udp ;
                 int32_t receive_host_ip;
+                int32_t receive_wifi_len;
+                int32_t receive_pass_len;
+                int8_t recieve_config_mode;
 
                 // Read
                 printf("Reading status from NVS ... ");
@@ -869,6 +797,32 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                     default :
                         printf("Error (%s) reading!\n", esp_err_to_name(err));
                 }
+                printf("Reading wifi len from NVS ... \n");
+                err = nvs_get_i32(my_handle, "wifi_len", &receive_wifi_len);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("wifi len = %ld\n", receive_wifi_len);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+                printf("Reading pass len from NVS ... \n");
+                err = nvs_get_i32(my_handle, "pass_len", &receive_pass_len);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("pass len = %ld\n", receive_pass_len);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
 
                 // Read 
                 printf("Reading wifi strings from NVS ... \n");
@@ -901,6 +855,20 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                         printf("Error (%s) reading!\n", esp_err_to_name(err));
                 }
 
+                printf("Reading config_mode from NVS ... \n");
+                err = nvs_get_i8(my_handle, "config_mode", &recieve_config_mode);
+                switch (err) {
+                    case ESP_OK:
+                        printf("Done\n");
+                        printf("config_mode = %d\n", recieve_config_mode);
+                        break;
+                    case ESP_ERR_NVS_NOT_FOUND:
+                        printf("The value is not initialized yet!\n");
+                        break;
+                    default :
+                        printf("Error (%s) reading!\n", esp_err_to_name(err));
+                }
+
 
 
                 // Close
@@ -919,6 +887,11 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 free(host_ip);*/
                 free(wifi_name);
                 free(password);
+
+                printf("CONFIGURACION DE ESP REALIZADA,REINICIANDO ESP ... \n");
+                esp_sleep_enable_timer_wakeup(3*1000000);
+                ESP_LOGI(GATTS_TABLE_TAG, "Deep sleep de 60 segundos iniciado");
+                esp_deep_sleep_start();
                 //free(wifi_name2);
                 //free(password2);
 
@@ -1051,7 +1024,7 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
     } while (0);
 }
 
-void app_main(void)
+void bluetooth_main(void)
 {
     esp_err_t ret;
 
@@ -1112,4 +1085,6 @@ void app_main(void)
     if (local_mtu_ret){
         ESP_LOGE(GATTS_TABLE_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
     }
+
+    
 }
