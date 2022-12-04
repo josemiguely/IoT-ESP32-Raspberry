@@ -14,8 +14,10 @@
    If you'd rather not, just change the below entries to strings with
    the config you want - ie #define EXAMPLE_WIFI_SSID "mywifissid"
 */
-#define EXAMPLE_ESP_WIFI_SSID      "Wifibakan"
-#define EXAMPLE_ESP_WIFI_PASS      "AardvarkBadgerHedgehog"
+// #define EXAMPLE_ESP_WIFI_SSID      "Wifibakan"
+// #define EXAMPLE_ESP_WIFI_PASS      "AardvarkBadgerHedgehog"
+#define EXAMPLE_ESP_WIFI_SSID      "Wifisssbakan"
+#define EXAMPLE_ESP_WIFI_PASS      "AardvarksssBadgerHedgehog"
 #define EXAMPLE_ESP_MAXIMUM_RETRY  CONFIG_ESP_MAXIMUM_RETRY
 
 #if CONFIG_ESP_WIFI_AUTH_OPEN
@@ -74,6 +76,14 @@ static void event_handler(void* arg, esp_event_base_t event_base,
 
 void wifi_connect(char * wifi_name,char* pass)
 {
+
+
+    uint8_t wifi_name2[32];
+
+    
+    //#define EXAMPLE_ESP_WIFI_SSID     (unsigned char) wifi_name
+    //#define EXAMPLE_ESP_WIFI_PASS     (unsigned char) pass
+
     s_wifi_event_group = xEventGroupCreate();
 
     // ESP_ERROR_CHECK(esp_netif_init());
@@ -97,10 +107,15 @@ void wifi_connect(char * wifi_name,char* pass)
                                                         NULL,
                                                         &instance_got_ip));
 
+    
+    
+
     wifi_config_t wifi_config = {
         .sta = {
             .ssid = EXAMPLE_ESP_WIFI_SSID,
             .password = EXAMPLE_ESP_WIFI_PASS,
+            // .ssid = {(uint8_t[32]) wifi_name},
+            // .password = {(uint8_t[32]) pass},
             /* Authmode threshold resets to WPA2 as default if password matches WPA2 standards (pasword len => 8).
              * If you want to connect the device to deprecated WEP/WPA networks, Please set the threshold value
              * to WIFI_AUTH_WEP/WIFI_AUTH_WPA_PSK and set the password with length and format matching to
@@ -110,6 +125,11 @@ void wifi_connect(char * wifi_name,char* pass)
             .sae_pwe_h2e = WPA3_SAE_PWE_BOTH,*/
         },
     };
+
+
+    strcpy((char *)wifi_config.sta.ssid,(char *)wifi_name);
+    strcpy((char *)wifi_config.sta.password,(char *)pass);
+
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
     ESP_ERROR_CHECK(esp_wifi_start() );
@@ -128,10 +148,10 @@ void wifi_connect(char * wifi_name,char* pass)
      * happened. */
     if (bits & WIFI_CONNECTED_BIT) {
         ESP_LOGI(WIFI_CONNECT, "connected to ap SSID:%s password:%s",
-                 EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
+                 wifi_name, pass);
     } else if (bits & WIFI_FAIL_BIT) {
         ESP_LOGI(WIFI_CONNECT, "Failed to connect to SSID:%s, password:%s",
-                 EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
+                 wifi_name, pass);
     } else {
         ESP_LOGE(WIFI_CONNECT, "UNEXPECTED EVENT");
     }

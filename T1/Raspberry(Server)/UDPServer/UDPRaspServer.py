@@ -2,11 +2,11 @@ import socket
 import sys
 sys.path.insert(1, '../Database') 
 import Desempaquetamiento
-import DatabaseWork
+import DatabaseWork2
 
 def run_server_udp():
         UDP_IP = "192.168.4.1"# "localhost" 
-        UDP_PORT = 10003+2
+        UDP_PORT = 3001
 
 
         sUDP = socket.socket(socket.AF_INET, # Internet
@@ -32,7 +32,7 @@ def run_server_udp():
                 else:
                 # if numid -1 == numid_anterior  
                     doc += data
-                    # print(f"doc+= {doc}") #Sacar este print después de verificar que UDP está funcionando bien
+                    print(f"doc+= {doc}") #Sacar este print después de verificar que UDP está funcionando bien
 
             print("Llego data :D")
             if doc == '\0':
@@ -46,8 +46,9 @@ def run_server_udp():
                     print("Paquete malo, esperaremos mas información")
                     break
                 else:
-                    DatabaseWork.dataSave(header,data)
-                    DatabaseWork.saveLogs(header)
+
+                    idlog=DatabaseWork2.saveLogs(data,header)
+                    DatabaseWork2.dataSave(header,data,idlog)
                     break
                     
                     
@@ -59,4 +60,5 @@ def run_server_udp():
 
             
 
-# run_server_udp()
+if __name__=="__main__":
+    run_server_udp()

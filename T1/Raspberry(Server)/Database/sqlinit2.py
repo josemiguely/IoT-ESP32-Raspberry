@@ -46,7 +46,7 @@ create_logs ="""
 -- Table `mydb`.`Log`
 -- -----------------------------------------------------
 CREATE TABLE Log (
-  `Id_device` INT ,
+  `Id_device` INTEGER PRIMARY KEY ,
   `Status_report` INT ,
   `Protocol_report` INT ,
   `Battery_Level` INT NULL,
@@ -54,7 +54,6 @@ CREATE TABLE Log (
   `Time_client` DATETIME ,
   `Time_server` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   `configuration_Id_device` INT NOT NULL,
-  PRIMARY KEY (`Id_device`),
   CONSTRAINT `fk_Log_configuration1`
     FOREIGN KEY (`configuration_Id_device`)
     REFERENCES `configuration` (`Id_device`)
@@ -66,8 +65,9 @@ create_data1="""
 -- -----------------------------------------------------
 -- Table `mydb`.`Data_1`
 -- -----------------------------------------------------
+
 CREATE TABLE `Data_1` (
-  `Id_device` INT NOT NULL,
+  `Id_device` INTEGER PRIMARY KEY,
   `Temperature` INT NULL,
   `Press` INT NULL,
   `Hum` INT NULL,
@@ -81,7 +81,6 @@ CREATE TABLE `Data_1` (
   `Freq_z` FLOAT NULL,
   `Time_client` DATETIME ,
   `Log_Id_device` INT NOT NULL,
-  PRIMARY KEY (`Id_device`),
   CONSTRAINT `fk_Data_1_Log`
     FOREIGN KEY (`Log_Id_device`)
     REFERENCES `Log` (`Id_device`)
@@ -94,16 +93,15 @@ create_data2="""
 -- Table `mydb`.`Data_2`
 -- -----------------------------------------------------
 CREATE TABLE Data_2 (
-  `Id_device` INT NOT NULL,
-  `Racc_x` FLOAT NULL,
-  `Racc_y` FLOAT NULL,
-  `Racc_z` FLOAT NULL,
-  `Rgyr_x` FLOAT NULL,
-  `Rgyr_y` FLOAT NULL,
-  `Rgyr_z` FLOAT NULL,
+  `Id_device` INTEGER PRIMARY KEY,
+  `Racc_x` TEXT NULL,
+  `Racc_y` TEXT NULL,
+  `Racc_z` TEXT NULL,
+  `Rgyr_x` TEXT NULL,
+  `Rgyr_y` TEXT NULL,
+  `Rgyr_z` TEXT NULL,
   `Time_client` DATETIME ,
   `Log_Id_device` INT NOT NULL,
-  PRIMARY KEY (`Id_device`),
   CONSTRAINT `fk_Data_2_Log1`
     FOREIGN KEY (`Log_Id_device`)
     REFERENCES `Log` (`Id_device`)
@@ -115,6 +113,8 @@ CREATE TABLE Data_2 (
 
 conn = sql.connect("DBakan.sqlite")
 cur = conn.cursor()
+cur.execute("PRAGMA foreign_keys = ON;")
+cur.execute("PRAGMA foreign_keys;")
 cur.execute(create_config)
 cur.execute(create_timestamp)
 cur.execute(create_logs)

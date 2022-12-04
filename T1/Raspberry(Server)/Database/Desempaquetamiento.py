@@ -44,7 +44,7 @@ def parseData(packet):
 def protUnpack(protocol:int, data):
     print(f"protUnpack bytes in data = {len(data)}")
 
-    protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf2000f2000f2000f"]
+    protocol_unpack = ["<BBl", "<BBlBfBf", "<BBlBfBff","<BBlBfBff6f","<BBlBfBf2000f2000f2000f2000f2000f2000f"]
    
 
    
@@ -60,7 +60,7 @@ def headerDict(data):
     
    
     print("unpack realizado")
-    ID_Dev = ID_Dev.decode('ascii')
+    ID_Dev = int(ID_Dev.decode('ascii')[1])
     MAC = ".".join([hex(x)[2:] for x in [M1, M2, M3, M4, M5, M6]])
     ID_protocol2=int(chr(ID_protocol))
     TransportL2=int(chr(TransportL))
@@ -85,16 +85,29 @@ def dataDict(protocol, data):
                 unp=list(unp)
                 lista_floatsACCx=unp[7:2007]
                 lista_floatsACCy=unp[2007:4007]
-                lista_floatsACCz=unp[4007:]
+                lista_floatsACCz=unp[4007:6007]
+
+                lista_floatsRgrx=unp[6007:8007]
+                lista_floatsRgry=unp[10007:120007]
+                lista_floatsRgrz=unp[4007:6007]
         
                 stringfloatAccx="["+";".join(map(str,lista_floatsACCx))+"]"
                 stringfloatAccy="["+";".join(map(str,lista_floatsACCy))+"]"
                 stringfloatAccz="["+";".join(map(str,lista_floatsACCz))+"]"
+
+                stringfloatRgrx="["+";".join(map(str, lista_floatsRgrx))+"]"
+                stringfloatRgry="["+";".join(map(str, lista_floatsRgry))+"]"
+                stringfloatRgrz="["+";".join(map(str, lista_floatsRgrz))+"]"
                 
                 unp= unp[0:7]
+
                 unp.append(stringfloatAccx)
                 unp.append(stringfloatAccy)
                 unp.append(stringfloatAccz)
+
+                unp.append(stringfloatRgrx)
+                unp.append(stringfloatRgry)
+                unp.append(stringfloatRgrz)
                
             
             return {key:val for (key,val) in zip(keys, unp)}
@@ -105,7 +118,7 @@ def dataDict(protocol, data):
     p1 = ["Val","Batt","Timestamp","Temp","Press","Hum","Co"]
     p2 = ["Val","Batt","Timestamp","Temp","Press","Hum","Co","RMS"]
     p3 = ["Val","Batt","Timestamp","Temp","Press","Hum","Co","RMS","Ampx","Frecx","Ampy","Frecy","Ampz","Frecz"]
-    p4 = ["Val","Batt","Timestamp","Temp","Press","Hum","Co","Accx","Accy","Accz"]
+    p4 = ["Val","Batt","Timestamp","Temp","Press","Hum","Co","Accx","Accy","Accz","Rgyrx","Rgyry","Rgyrz"]
     p = [p0, p1, p2,p3,p4]
 
     try:

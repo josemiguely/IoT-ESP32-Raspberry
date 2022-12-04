@@ -9,11 +9,11 @@
 
 
 
-static const char *TAG2 = "example";
+//static const char *TAG2 = "example";
 
 //Entrega el largo de la data según el protocolo
 
-unsigned short lengmsg[6] = {6, 16, 20, 44, 24016};
+unsigned short lengmsg[6] = {6, 16, 20, 44, 48016};
 int loop;
 
 unsigned short dataLength(char protocol){
@@ -216,6 +216,15 @@ char * dataprotocol4(){
 
     float * accz = acceloremeter_sensor_z();
     memcpy((void*) &(msg[16016]), (void*) accz, 8000);
+
+    float * rgyrx = rgyr_x();
+    memcpy((void*) &(msg[24016]), (void*) rgyrx, 8000);
+    
+    float * rgyry = rgyr_y();
+    memcpy((void*) &(msg[32016]), (void*) rgyry, 8000);
+
+    float * rgyrz = rgyr_z();
+    memcpy((void*) &(msg[40016]), (void*) rgyrz, 8000);
 
     return msg;
 }

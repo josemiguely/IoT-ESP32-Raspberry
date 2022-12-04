@@ -15,11 +15,13 @@
 #include "esp_gatts_api.h"
 #include "esp_bt_main.h"
 #include "gatts_table_creat_demo.h"
+
 #include "esp_gatt_common_api.h"
 #include <string.h>
 #include "gatts_table_creat_demo.c"
 #include "client_v4T2.c"
-
+// #include "bluetooth_status_server.c"
+// #include "bluetooth_status_server.h"
 
 #include "lwip/err.h"
 #include "lwip/sockets.h"
@@ -85,6 +87,7 @@ void app_main(void) {
 
     
     else{
+        status=21;
 
         printf("Se leyo status = %i from NVS ... \n",status);
         // Close
@@ -110,6 +113,7 @@ void app_main(void) {
 
 
         else if (status == 2){
+            udp('a','b');
             printf("Conexion TCP Discontinua\n");
         }
 
@@ -119,6 +123,7 @@ void app_main(void) {
 
         else if (status == 30){
             printf("BLE Continua\n");
+            bluetooth_main();
         }
 
         else if (status == 31){

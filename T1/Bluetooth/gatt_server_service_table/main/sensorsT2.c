@@ -49,7 +49,7 @@ float * acceloremeter_sensor_z(){
 float * rgyr_x(){
     float* arr = malloc(2000 * sizeof(float));
     for(int i = 0; i < 2000; i++){
-        floatrand(-1000,1000);
+        arr[i]=floatrand(-1000,1000);
     }
    
     return arr;    
@@ -58,7 +58,7 @@ float * rgyr_x(){
 float * rgyr_y(){
     float* arr = malloc(2000 * sizeof(float));
     for(int i = 0; i < 2000; i++){
-        floatrand(-1000,1000);
+        arr[i]=floatrand(-1000,1000);
     }
    
     return arr;    

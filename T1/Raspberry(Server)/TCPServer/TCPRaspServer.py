@@ -8,7 +8,7 @@ import socket
 # in the sys.path list
 sys.path.insert(1, '../Database') 
 import Desempaquetamiento
-import DatabaseWork
+import DatabaseWork2
 def int_to_string_bytearray(a: int) -> bytearray:
     return f'{a:d}'.encode('utf-8').zfill(5)
 
@@ -22,7 +22,7 @@ def run_server_tcp():
 
     # "192.168.5.177"  # Standard loopback interface address (localhost)
     HOST = "192.168.4.1"#"localhost"
-    PORT = 10003+1  # Port to listen on (non-privileged ports are > 1023)
+    PORT = 3000  # Port to listen on (non-privileged ports are > 1023)
 
     s = socket.socket(socket.AF_INET, #internet
                     socket.SOCK_STREAM) #TCP
@@ -31,10 +31,6 @@ def run_server_tcp():
     s.listen(50)
     
     print(f"Listening on {HOST}:{PORT}")
-
-
-
-
 
 
     while True:
@@ -81,7 +77,8 @@ def run_server_tcp():
             print("Comienzo de empaquetamiento de data...")
             try:
                 (header,data) = Desempaquetamiento.parseData(doc)
-                DatabaseWork.dataSave(header,data)
+                idlog=DatabaseWork2.saveLogs(data,header)
+                DatabaseWork2.dataSave(header,data,idlog)
                 
                 conn.send(b'\1')
                 
@@ -90,7 +87,7 @@ def run_server_tcp():
                 print(e)
                 print(str(e))
                 break 
-            DatabaseWork.saveLogs(header)
+            # DatabaseWork.saveLogs(header)
 
             break
 
@@ -99,4 +96,5 @@ def run_server_tcp():
         break
 
 
-# run_server_tcp()
+if __name__ == "__main__":
+    run_server_tcp()

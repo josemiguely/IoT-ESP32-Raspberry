@@ -12,7 +12,7 @@ def tsNow() -> float:
     return ts
 
 
-def dataSave(header, data):
+def dataSave(header, data, id_log):
     '''
     Save de data in the correspondant database table
     '''
@@ -20,7 +20,8 @@ def dataSave(header, data):
     ts = tsNow()
     path=os.getcwd()
     try:
-        sqliteConnection = sql.connect('./Database/DBakan.sqlite')
+        sqliteConnection = sql.connect('../Database/DBakan.sqlite')
+        #sqliteConnection = sql.connect('./DBakan.sqlite')
         cursor = sqliteConnection.cursor()
     except Exception as e:
         print("Error en dataSave")
@@ -30,17 +31,15 @@ def dataSave(header, data):
     if  protocol == 0:
         print("Entró protocolo 0 en dataSave")
         # Tabla Datos
-        '''
+        
         try:
-            
+
+
             sqlite_insert_with_param = """
-            INSERT INTO Data_1 (
-            Id_device,
-            VALUES(?);"""
+            INSERT INTO Data_1 (Log_Id_device) VALUES(?);"""
             ## Poner la configuracion segun el parser
             
-            
-            data_tuple = header["ID_Dev"]
+            data_tuple = (id_log,)
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
             
@@ -49,7 +48,7 @@ def dataSave(header, data):
             print("Error al insertar en protocolo 0",error)
         finally:
             if sqliteConnection:
-                sqliteConnection.close()'''
+                sqliteConnection.close()
 
     elif protocol == 1:
     # Tabla Datos
@@ -61,9 +60,10 @@ def dataSave(header, data):
             Press,
             Hum,
             Co,
-            Time_client) VALUES(?, ?, ?, ?,?);"""
+            Time_client,
+            Log_Id_device) VALUES(?, ?, ?, ?,?,?);"""
             ## Poner la configuracion segun el parser
-            data_tuple = (data["Temp"], data["Press"], data["Hum"],data["Co"],data["Timestamp"])
+            data_tuple = (data["Temp"], data["Press"], data["Hum"],data["Co"],data["Timestamp"],id_log)
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
             
@@ -86,8 +86,9 @@ def dataSave(header, data):
             Hum,
             Co,
             RMS,
-            Time_client) VALUES(?, ?, ?, ?,?,?);"""
-            data_tuple = (data["Temp"], data["Press"], data["Hum"],data["Co"],data["RMS"],data["Timestamp"])
+            Time_client,
+            Log_Id_device) VALUES(?, ?, ?, ?,?,?,?);"""
+            data_tuple = (data["Temp"], data["Press"], data["Hum"],data["Co"],data["RMS"],data["Timestamp"],id_log)
            
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
@@ -115,11 +116,12 @@ def dataSave(header, data):
             Freq_y,
             Amp_z,
             Freq_z,
-            Time_client) VALUES(?, ?, ?, ?,?,?,?,?,?,?,?,?);"""
+            Time_client,
+            Log_Id_device) VALUES(?, ?, ?, ?,?,?,?,?,?,?,?,?,?);"""
             data_tuple = (data["Temp"], data["Press"], 
                         data["Hum"],data["Co"],data["RMS"],data["Ampx"],
                         data["Frecx"],data["Ampy"],data["Frecy"],data["Ampz"],
-                        data["Frecz"],data["Timestamp"])
+                        data["Frecz"],data["Timestamp"],id_log)
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
             #cursor.close()
@@ -141,10 +143,11 @@ def dataSave(header, data):
             Press,
             Hum,
             Co,
-            Time_client) VALUES(?, ?, ?, ?,?);"""
+            Time_client,
+            Log_Id_device) VALUES(?, ?, ?, ?,?,?);"""
             ## Poner la configuracion segun el parser
-            data_tuple1 =data_tuple = (data["Temp"], data["Press"],
-                                    data["Hum"],data["Co"],data["RMS"],data["Timestamp"])
+            data_tuple1 = (data["Temp"], data["Press"],
+                                    data["Hum"],data["Co"],data["Timestamp"],id_log)
             cursor.execute(sqlite_insert_with_param1, data_tuple1)
 
             sqlite_insert_with_param2 = """
@@ -155,10 +158,11 @@ def dataSave(header, data):
             Rgyr_x,
             Rgyr_y,
             Rgyr_z,
-            Time_client) VALUES(?, ?, ?, ?, ?, ?,?);"""
+            Time_client,
+            Log_Id_device) VALUES(?, ?, ?, ?, ?, ?,?,?);"""
             ## Poner la configuracion segun el parser
             data_tuple2 = (data["Accx"], data["Accy"], data["Accz"],
-                           data["gyrx"], data["gyry"], data["gyrz"])
+                           data["Rgyrx"], data["Rgyry"], data["Rgyrz"],data["Timestamp"],id_log)
             cursor.execute(sqlite_insert_with_param2, data_tuple2)
 
             sqliteConnection.commit()
@@ -169,10 +173,15 @@ def dataSave(header, data):
             if sqliteConnection:
                 sqliteConnection.close()
 
-def saveLogs(header,data):
+def saveLogs(data,header):
+
+    path=os.getcwd()
+    print(f'path = {path}')
+
     # Tabla Logs (Para todos)
     try:
-        sqliteConnection = sql.connect('./Database/DBakan.sqlite')
+        sqliteConnection = sql.connect('../Database/DBakan.sqlite')
+        #sqliteConnection = sql.connect('./DBakan.sqlite')
         cursor = sqliteConnection.cursor()
     except Exception as e:
         print("Error en saveLogs")
@@ -182,9 +191,11 @@ def saveLogs(header,data):
     try:
         
          cursor = sqliteConnection.cursor()
-        
+         cursor.execute(f"SELECT Status_conf FROM configuration WHERE Id_device={header['ID_Dev']}")
+         status=cursor.fetchone()[0]
+     
          sqlite_insert_with_param = """
-         INSERT INTO Logs (
+         INSERT INTO Log (
             Status_report,
             Protocol_report,
             Battery_Level,
@@ -193,8 +204,12 @@ def saveLogs(header,data):
             ) 
          VALUES(?, ?, ?, ?, ?);"""
          
-         data_tuple = (header["status"],header["protocol"],data["Batt"],None,header["ID_Dev"])
+         data_tuple = (status,header["protocol"],data["Batt"],None,header["ID_Dev"])
          cursor.execute(sqlite_insert_with_param, data_tuple)
+         
+         id_log=cursor.lastrowid
+         print(id_log)
+         
          sqliteConnection.commit()
          cursor.close()
     except sql.Error as error:
@@ -202,6 +217,8 @@ def saveLogs(header,data):
     finally:
          if sqliteConnection:
              sqliteConnection.close()
+    
+    return id_log
 
          
 def getConfig():
@@ -252,3 +269,18 @@ def getConfig():
         print("Algo salio mal en getConfig uwu")
         print(e)
         return
+
+def getStatus(id_dev,cursor):
+    
+    cursor.execute(f"SELECT status FROM Config WHERE Id_device={id_dev}")
+
+
+
+if __name__ == "__main__" :
+    header={'ID_Dev': 2, 'MAC': '4c.eb.d6.62.b.b0', 'protocol': 0, 'transport': 1, 'length': 5} 
+    data= {'Val': 49, 'Batt': 23, 'Timestamp': 0}
+    id_log=saveLogs(header)
+    print(f"SAVELOG DEVOLVIO {id_log}")
+
+    dataSave(header,data,id_log)
+    

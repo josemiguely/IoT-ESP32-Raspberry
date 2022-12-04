@@ -141,7 +141,7 @@ class GUIController:
                 print("leyendo")
                 value = device.char_read(list(characteristics)[4])
                 print(value)
-                print("Se escribio el paquete")
+                print("Se leeyo el paquete")
                 qty = 100
             except pygatt.exceptions.NotConnectedError:
                 qty += 1
