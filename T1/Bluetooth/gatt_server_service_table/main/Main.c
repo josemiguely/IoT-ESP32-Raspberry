@@ -52,18 +52,23 @@ void app_main(void) {
     printf("Reading status from NVS ... \n");
     int8_t status= -1; // value will default to 1-, if not set yet in NVS
     int8_t config_mode = 0;
+    int8_t id_protocol = -1; // Si no existe protocolo entonces sera por default -1
+    int32_t discontinous_time = 0;
     err = nvs_get_i8(my_handle, "status", &status);
     nvs_get_i8(my_handle, "config_mode", &config_mode);
+    nvs_get_i8(my_handle, "id_protocol", &id_protocol);
+    nvs_get_i32(my_handle, "discontinous_time", &discontinous_time);
+    printf("Discontinous time en NVS es = %li\n",discontinous_time);
     //status = -1; //Comentar esta linea si no queremos que se vuelva a reconfigurar
 
 
     if (err==ESP_ERR_NVS_NOT_FOUND || status == -1) {
-        printf("Aun no ha sido configurado el ESP, mandemos funcion de configuracion");
+        printf("Aun no ha sido configurado el ESP, mandemos funcion de configuracion\n");
         printf("Llamando a configuracion blueooth...\n");
         nvs_close(my_handle);
         
 
-        bluetooth_main(); //hst que escapar de bluetooth main
+        bluetooth_main('9',0); //Se le pasa un protocolo que no existe y discontinous time = 0.
     
         printf("Bluetooth main ya fue ejecutado\n");
         
@@ -87,7 +92,9 @@ void app_main(void) {
 
     
     else{
-        status=21;
+
+
+        //status=31;
 
         printf("Se leyo status = %i from NVS ... \n",status);
         // Close
@@ -95,9 +102,13 @@ void app_main(void) {
         
         printf("Ejecutando un status...\n");
 
-        if (status==0){
-            printf("Configuracion por Bluetooth \n");
+
+        if (status == 0){
+            printf("Configuracion por bluetooth \n");
+            bluetooth_main('9',0); //Se le pasa un protocolo que no existe y discontinous time = 0.
+        
         }
+    
 
         else if (status == 20){
             printf("Configuracion via TCP en BD \n");
@@ -106,28 +117,32 @@ void app_main(void) {
 
         else if (status == 21){
             printf("Conexion TCP Continua \n");
-            //A nuestro codigo TCP
-            tcp('a','b');
+            
+            tcp('a','1');//Creo que el primer parmaetro es innecesario dado que adentro de tcp se recuepra el protocolo
 
         }
 
 
-        else if (status == 2){
-            udp('a','b');
+        else if (status == 22){
             printf("Conexion TCP Discontinua\n");
+            tcp('a','1');//Creo que el primer parmaetro es innecesario dado que adentro de tcp se recuepra el protocolo
+            
         }
 
         else if (status == 23){
             printf("Conexion UDP\n");
+            udp('a','0');//Creo que el primer parmaetro es innecesario dado que adentro de udp se recuepra el protocolo
         }
 
         else if (status == 30){
             printf("BLE Continua\n");
-            bluetooth_main();
+            bluetooth_main(id_protocol,discontinous_time);
         }
 
         else if (status == 31){
             printf("BLE Discontinua\n");
+            bluetooth_main(id_protocol,discontinous_time);
+            printf("--------AFUERA BLE DISCONTINUA AFUERA------\n");
         }
 
         else {

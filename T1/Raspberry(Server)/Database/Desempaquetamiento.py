@@ -62,6 +62,8 @@ def headerDict(data):
     print("unpack realizado")
     ID_Dev = int(ID_Dev.decode('ascii')[1])
     MAC = ".".join([hex(x)[2:] for x in [M1, M2, M3, M4, M5, M6]])
+    ID_deb =ord(hex(M6)[2:]) #xA5
+    print(MAC)
     ID_protocol2=int(chr(ID_protocol))
     TransportL2=int(chr(TransportL))
     return_dict={"ID_Dev":ID_Dev,"MAC":MAC, "protocol":ID_protocol2, "transport":TransportL2, "length":leng_msg}

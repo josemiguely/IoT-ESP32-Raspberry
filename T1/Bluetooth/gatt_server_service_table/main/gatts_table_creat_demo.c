@@ -31,6 +31,10 @@
 // #include <string.h>
 //#include "packetingT2.c"
 
+char* mensaje (char protocol, char transportLayer);
+
+unsigned short msg_total_length2[6] = {12+6, 12+16, 12+20, 12+44, 12+48016};
+
 #define GATTS_TABLE_TAG "GATO_BAKAN_ESP"
 
 #define PROFILE_NUM                 1
@@ -163,17 +167,23 @@ static const uint16_t GATTS_SERVICE_UUID_TEST      = 0x00FF;
 static const uint16_t GATTS_CHAR_UUID_TEST_A       = 0xFF01;
 static const uint16_t GATTS_CHAR_UUID_TEST_B       = 0xFF02;
 static const uint16_t GATTS_CHAR_UUID_TEST_C       = 0xFF03;
+static const uint16_t GATTS_CHAR_UUID_TEST_D       = 0xFF04;
 
 static const uint16_t primary_service_uuid         = ESP_GATT_UUID_PRI_SERVICE;
 static const uint16_t character_declaration_uuid   = ESP_GATT_UUID_CHAR_DECLARE;
 static const uint16_t character_client_config_uuid = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
-static const uint8_t char_prop_read                =  ESP_GATT_CHAR_PROP_BIT_READ;
+static const uint8_t char_prop_read                = ESP_GATT_CHAR_PROP_BIT_READ;
 static const uint8_t char_prop_write               = ESP_GATT_CHAR_PROP_BIT_WRITE;
 static const uint8_t char_prop_read_write_notify   = ESP_GATT_CHAR_PROP_BIT_WRITE | ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
 static const uint8_t heart_measurement_ccc[2]      = {0x00, 0x00};
-static uint8_t char_valueA[80];
-static const uint8_t char_valueB[5]                 = {'C', 'A', 'R', 'B','\0'};
-static const uint8_t char_valueC[5]                 = {'C', 'A', 'R', 'C','\0'};
+static uint8_t char_valueA[18];
+static uint8_t char_valueB[12+16];
+static uint8_t char_valueC[12+20];
+static uint8_t char_valueD[12+44];
+static uint32_t discontinous_time = 0;
+
+
+//static uint8_t char_valueC[5]                 = {'C', 'A', 'R', 'C','\0'};
 
 
 //La primera característica es la posicion 4 de python.
@@ -224,6 +234,16 @@ static const esp_gatts_attr_db_t gatt_db[HRS_IDX_NB] =
     [IDX_CHAR_VAL_C]  =
     {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&GATTS_CHAR_UUID_TEST_C, ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,
       GATTS_DEMO_CHAR_VAL_LEN_MAX, sizeof(char_valueC), (uint8_t *)char_valueC}},
+
+     /* Characteristic Declaration */
+    [IDX_CHAR_D]      =
+    {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&character_declaration_uuid, ESP_GATT_PERM_READ,
+      CHAR_DECLARATION_SIZE, CHAR_DECLARATION_SIZE, (uint8_t *)&char_prop_write}},
+
+    /* Characteristic Value */
+    [IDX_CHAR_VAL_D]  =
+    {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&GATTS_CHAR_UUID_TEST_D, ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,
+      GATTS_DEMO_CHAR_VAL_LEN_MAX, sizeof(char_valueD), (uint8_t *)char_valueD}},
 
 };
 
@@ -389,7 +409,19 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
         case ESP_GATTS_READ_EVT:
             ESP_LOGI(GATTS_TABLE_TAG, "ESP_GATTS_READ_EVT");
 
-            printf("READ _EVENT HOLA");
+            printf("READ_EVENT HOLA\n");
+            printf("DISCONTINOUS TIME ES === %li  ===",discontinous_time);
+
+            // discontinous_time=1;
+            // if (discontinous_time>0){
+            //     printf("SHUTDOWN de bluetooth discontinuo\n");
+            //     esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
+            //     printf("Iniciando deep sleep de 60*%li segundos\n ",discontinous_time);
+            //     esp_deep_sleep_start();
+            // }
+
+            
+
 
        	    break;
         case ESP_GATTS_WRITE_EVT:
@@ -662,7 +694,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 int32_t receive_BME688_sampling;
                 int32_t receive_discontinous_time;
                 int32_t receive_port_tcp;
-                int32_t receive_port_udp ;
+                int32_t receive_port_udp;
                 int32_t receive_host_ip;
                 int32_t receive_wifi_len;
                 int32_t receive_pass_len;
@@ -894,7 +926,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
 
                 printf("CONFIGURACION DE ESP REALIZADA,REINICIANDO ESP ... \n");
                 esp_sleep_enable_timer_wakeup(3*1000000);
-                ESP_LOGI(GATTS_TABLE_TAG, "Deep sleep de 60 segundos iniciado");
+                ESP_LOGI(GATTS_TABLE_TAG, "Deep sleep de 3 segundos iniciado");
                 esp_deep_sleep_start();
                 //free(wifi_name2);
                 //free(password2);
@@ -970,6 +1002,17 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
             break;
         case ESP_GATTS_DISCONNECT_EVT:
             ESP_LOGI(GATTS_TABLE_TAG, "ESP_GATTS_DISCONNECT_EVT, reason = 0x%x", param->disconnect.reason);
+            
+            
+            //discontinous_time=1; Esta linea la descomentamos si queremos testear el shutdown
+            if (discontinous_time>0){
+                printf("SHUTDOWN de bluetooth discontinuo\n");
+                esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
+                printf("Iniciando deep sleep de 60*%li segundos\n ",discontinous_time);
+                esp_deep_sleep_start();
+            }
+            
+            
             esp_ble_gap_start_advertising(&adv_params);
             break;
         case ESP_GATTS_CREAT_ATTR_TAB_EVT:{
@@ -998,6 +1041,9 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
         default:
             break;
     }
+
+
+    
 }
 
 
@@ -1025,15 +1071,59 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
                 }
             }
         }
+    
+    
+        
+    
     } while (0);
 }
 
-void bluetooth_main(void)
+void bluetooth_main(char protocoln,int discontinous)
 {
     esp_err_t ret;
 
-    //char_valueA=mensaje('0','0');
+    char protocol2 = protocoln+48;
+    //printf("protocol 2 = %c\n",protocol2);
+    
+    if (discontinous>0){
+        discontinous_time = discontinous;
+    }
 
+    if(protocoln!='9'){
+
+    char protocol = protocol2; // aqui falta que protocol sea igual al protocol2
+    printf("PROTOCOLO QUE ENTRO= %c\n",protocol);
+    int largo_mensaje= msg_total_length2[((int) protocol)-48];
+    printf("Largo del mensaje= %i\n",largo_mensaje);
+    char * respuesta =  mensaje(protocol,'2');    
+
+    switch (protocol)
+    {
+    case '0':
+        printf("Protocolo 0 bluetooth \n");
+        memcpy(char_valueA,respuesta,largo_mensaje);
+        break;
+
+    case '1':
+        printf("Protocolo 1 bluetooth \n");
+        memcpy(char_valueB,respuesta,largo_mensaje);
+        break;
+
+    case '2':
+        printf("Protocolo 2 bluetooth \n");
+        memcpy(char_valueC,respuesta,largo_mensaje);
+        break;
+
+    case '3':
+        printf("Protocolo 3 bluetooth \n");
+        memcpy(char_valueD,respuesta,largo_mensaje);
+        break;
+    default:
+        printf("Configuracion bluetooth\n");
+        break;
+    }
+}
+    
     /* Initialize NVS. */
     ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -1091,6 +1181,8 @@ void bluetooth_main(void)
     if (local_mtu_ret){
         ESP_LOGE(GATTS_TABLE_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
     }
+
+    
 
     
 }

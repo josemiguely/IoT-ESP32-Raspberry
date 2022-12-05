@@ -47,10 +47,6 @@ class Ui_Dialog(object):
         self.label_29.setStyleSheet("color: rgb(0, 0, 0);")
         self.label_29.setTextFormat(QtCore.Qt.AutoText)
         self.label_29.setObjectName("label_29")
-        self.acc_samp_field = QtWidgets.QTextEdit(self.tab)
-        self.acc_samp_field.setGeometry(QtCore.QRect(260, 190, 71, 31))
-        self.acc_samp_field.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.acc_samp_field.setObjectName("acc_samp_field")
         self.acc_samp_label = QtWidgets.QLabel(self.tab)
         self.acc_samp_label.setGeometry(QtCore.QRect(140, 200, 91, 16))
         self.acc_samp_label.setStyleSheet("color: rgb(0, 0, 0);")
@@ -59,14 +55,6 @@ class Ui_Dialog(object):
         self.acc_sens_label.setGeometry(QtCore.QRect(140, 250, 91, 16))
         self.acc_sens_label.setStyleSheet("color: rgb(0, 0, 0);")
         self.acc_sens_label.setObjectName("acc_sens_label")
-        self.acc_sens_field = QtWidgets.QTextEdit(self.tab)
-        self.acc_sens_field.setGeometry(QtCore.QRect(260, 240, 71, 31))
-        self.acc_sens_field.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.acc_sens_field.setObjectName("acc_sens_field")
-        self.gyro_sens_field = QtWidgets.QTextEdit(self.tab)
-        self.gyro_sens_field.setGeometry(QtCore.QRect(260, 290, 71, 31))
-        self.gyro_sens_field.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.gyro_sens_field.setObjectName("gyro_sens_field")
         self.gyro_sens_label = QtWidgets.QLabel(self.tab)
         self.gyro_sens_label.setGeometry(QtCore.QRect(140, 300, 111, 16))
         self.gyro_sens_label.setStyleSheet("color: rgb(0, 0, 0);")
@@ -75,16 +63,12 @@ class Ui_Dialog(object):
         self.bme_label.setGeometry(QtCore.QRect(140, 350, 121, 16))
         self.bme_label.setStyleSheet("color: rgb(0, 0, 0);")
         self.bme_label.setObjectName("bme_label")
-        self.bme_field = QtWidgets.QTextEdit(self.tab)
-        self.bme_field.setGeometry(QtCore.QRect(260, 340, 71, 31))
-        self.bme_field.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.bme_field.setObjectName("bme_field")
         self.disc_time_label = QtWidgets.QLabel(self.tab)
         self.disc_time_label.setGeometry(QtCore.QRect(140, 400, 111, 16))
         self.disc_time_label.setStyleSheet("color: rgb(0, 0, 0);")
         self.disc_time_label.setObjectName("disc_time_label")
         self.disc_time_field = QtWidgets.QTextEdit(self.tab)
-        self.disc_time_field.setGeometry(QtCore.QRect(260, 390, 71, 31))
+        self.disc_time_field.setGeometry(QtCore.QRect(280, 390, 71, 31))
         self.disc_time_field.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.disc_time_field.setObjectName("disc_time_field")
         self.port_tcp_field = QtWidgets.QTextEdit(self.tab)
@@ -294,6 +278,8 @@ class Ui_Dialog(object):
         self.status_select.addItem("")
         self.status_select.addItem("")
         self.status_select.addItem("")
+        self.status_select.addItem("")
+        self.status_select.addItem("")
         self.status_label = QtWidgets.QLabel(self.tab)
         self.status_label.setGeometry(QtCore.QRect(249, 550, 121, 16))
         self.status_label.setStyleSheet("color: rgb(0, 0, 0);")
@@ -496,6 +482,33 @@ class Ui_Dialog(object):
 "background-color: rgb(172,0 , 0);\n"
 "")
         self.reset_btn.setObjectName("reset_btn")
+        self.acc_samp_field = QtWidgets.QComboBox(self.tab)
+        self.acc_samp_field.setGeometry(QtCore.QRect(280, 200, 69, 22))
+        self.acc_samp_field.setObjectName("acc_samp_field")
+        self.acc_samp_field.addItem("")
+        self.acc_samp_field.addItem("")
+        self.acc_samp_field.addItem("")
+        self.acc_samp_field.addItem("")
+        self.acc_sens_field = QtWidgets.QComboBox(self.tab)
+        self.acc_sens_field.setGeometry(QtCore.QRect(280, 250, 69, 22))
+        self.acc_sens_field.setObjectName("acc_sens_field")
+        self.acc_sens_field.addItem("")
+        self.acc_sens_field.addItem("")
+        self.acc_sens_field.addItem("")
+        self.acc_sens_field.addItem("")
+        self.gyro_sens_field = QtWidgets.QComboBox(self.tab)
+        self.gyro_sens_field.setGeometry(QtCore.QRect(280, 300, 69, 22))
+        self.gyro_sens_field.setObjectName("gyro_sens_field")
+        self.gyro_sens_field.addItem("")
+        self.gyro_sens_field.addItem("")
+        self.gyro_sens_field.addItem("")
+        self.bme_field = QtWidgets.QComboBox(self.tab)
+        self.bme_field.setGeometry(QtCore.QRect(280, 350, 69, 22))
+        self.bme_field.setObjectName("bme_field")
+        self.bme_field.addItem("")
+        self.bme_field.addItem("")
+        self.bme_field.addItem("")
+        self.bme_field.addItem("")
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -679,13 +692,10 @@ class Ui_Dialog(object):
         self.plot_3_device_name_label.setFont(font)
         self.plot_3_device_name_label.setStyleSheet("color: rgb(0, 0, 0);")
         self.plot_3_device_name_label.setObjectName("plot_3_device_name_label")
-        self.label = QtWidgets.QLabel(self.tab_2)
-        self.label.setGeometry(QtCore.QRect(50, 220, 481, 20))
-        self.label.setObjectName("label")
         self.tabWidget.addTab(self.tab_2, "")
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -694,30 +704,10 @@ class Ui_Dialog(object):
         self.label_27.setText(_translate("Dialog", "ESP-32\'s disponibles por Bluetooth"))
         self.search_esp32.setText(_translate("Dialog", "Buscar ESP-32"))
         self.label_29.setText(_translate("Dialog", "Parametros del ESP-32"))
-        self.acc_samp_field.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">100</p></body></html>"))
         self.acc_samp_label.setText(_translate("Dialog", "Acc Sampling"))
         self.acc_sens_label.setText(_translate("Dialog", "Acc Sensibility"))
-        self.acc_sens_field.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">8</p></body></html>"))
-        self.gyro_sens_field.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">200</p></body></html>"))
         self.gyro_sens_label.setText(_translate("Dialog", "Gyro Sensibility"))
         self.bme_label.setText(_translate("Dialog", "BME688 Sampling"))
-        self.bme_field.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">4</p></body></html>"))
         self.disc_time_label.setText(_translate("Dialog", "Discontinuos time"))
         self.disc_time_field.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -760,6 +750,8 @@ class Ui_Dialog(object):
         self.status_select.setItemText(2, _translate("Dialog", "Conexion UDP"))
         self.status_select.setItemText(3, _translate("Dialog", "BLE continua"))
         self.status_select.setItemText(4, _translate("Dialog", "BLE discontinua"))
+        self.status_select.setItemText(5, _translate("Dialog", "Actualización via BLE"))
+        self.status_select.setItemText(6, _translate("Dialog", "Actualización via TCP"))
         self.status_label.setText(_translate("Dialog", "Modo de operacion"))
         self.host_ip_addr_label.setText(_translate("Dialog", "Host ip address"))
         self.host_ip_addr_field.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -769,11 +761,26 @@ class Ui_Dialog(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">19216841</span></p></body></html>"))
         self.label_30.setText(_translate("Dialog", "Parametros de conexion "))
         self.config_mode_label.setText(_translate("Dialog", "Modo de configuracion"))
-        self.config_mode_select.setItemText(0, _translate("Dialog", "Configuracion por Bluethooth"))
+        self.config_mode_select.setItemText(0, _translate("Dialog", "Configuracion por Bluetooth"))
         self.config_mode_select.setItemText(1, _translate("Dialog", "Configuracion via TCP en BD"))
         self.label_31.setText(_translate("Dialog", "Configuracion del dispositivo"))
         self.label_32.setText(_translate("Dialog", "Parametros de la interaccion"))
         self.reset_btn.setText(_translate("Dialog", "Reset"))
+        self.acc_samp_field.setItemText(0, _translate("Dialog", "10"))
+        self.acc_samp_field.setItemText(1, _translate("Dialog", "100"))
+        self.acc_samp_field.setItemText(2, _translate("Dialog", "400"))
+        self.acc_samp_field.setItemText(3, _translate("Dialog", "1000"))
+        self.acc_sens_field.setItemText(0, _translate("Dialog", "2"))
+        self.acc_sens_field.setItemText(1, _translate("Dialog", "4"))
+        self.acc_sens_field.setItemText(2, _translate("Dialog", "8"))
+        self.acc_sens_field.setItemText(3, _translate("Dialog", "16"))
+        self.gyro_sens_field.setItemText(0, _translate("Dialog", "200"))
+        self.gyro_sens_field.setItemText(1, _translate("Dialog", "250"))
+        self.gyro_sens_field.setItemText(2, _translate("Dialog", "500"))
+        self.bme_field.setItemText(0, _translate("Dialog", "1"))
+        self.bme_field.setItemText(1, _translate("Dialog", "2"))
+        self.bme_field.setItemText(2, _translate("Dialog", "3"))
+        self.bme_field.setItemText(3, _translate("Dialog", "4"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Dialog", "Configuracion"))
         self.plot_1_start_btn.setText(_translate("Dialog", "Inicio"))
         self.plot_1_stop_btn.setText(_translate("Dialog", "Detener"))
@@ -823,7 +830,6 @@ class Ui_Dialog(object):
         self.plot_1_device_name_label.setText(_translate("Dialog", "Dispositivo"))
         self.plot_2_device_name_label.setText(_translate("Dialog", "Dispositivo"))
         self.plot_3_device_name_label.setText(_translate("Dialog", "Dispositivo"))
-        self.label.setText(_translate("Dialog", "AAAAA"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", "Visualizacion"))
 from pyqtgraph import PlotWidget
 

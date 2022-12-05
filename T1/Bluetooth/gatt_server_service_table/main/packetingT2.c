@@ -9,7 +9,7 @@
 
 
 
-//static const char *TAG2 = "example";
+static const char *TAG2 = "PACKETING";
 
 //Entrega el largo de la data según el protocolo
 
@@ -31,23 +31,34 @@ unsigned short messageLength(char protocol){
 char* header(char protocol, char transportLayer){
 	//ESP_LOGI(TAG2, " protocol HEADER = %c\n", protocol);
     char* head = malloc(12);
-    
-    char * ID = "D1"; 
-    memcpy((void*) &(head[0]), (void*) ID, 2);
+    char* ID_device = malloc(2);
+
+    //char * ID = "D1"; 
+    //memcpy((void*) &(head[0]), (void*) ID, 2);
 	
     uint8_t* MACaddrs = malloc(6); 
     
+    
+
 	esp_efuse_mac_get_default(MACaddrs);
      
 	memcpy((void*) &(head[2]), (void*) MACaddrs, 6);
+    
+    for (int i = 0 ; i< 6; i++){
+        printf("MACaddrs[i] = %i\n",MACaddrs[i]);
+    }
+    
     head[8]= transportLayer;
 	head[9]= protocol;
-   
-    
+    memcpy(ID_device,&MACaddrs[4],2);// x01xA9 
+
+
+    memcpy((void*) &(head[0]), (void*) ID_device, 2);
 	unsigned short dataLen = dataLength(protocol);
 	memcpy((void*) &(head[10]), (void*) &dataLen, 2);
         
 	free(MACaddrs);
+    free(ID_device);
 	return head;
 }
 
@@ -245,32 +256,32 @@ char* mensaje (char protocol, char transportLayer){
 	switch (intprotocol) {
 		
         case 0:
-            //ESP_LOGI(TAG2,"======= dataprotocol0 ====");
+            ESP_LOGI(TAG2,"======= dataprotocol0 ====");
 			data = dataprotocol0();
-            //ESP_LOGI(TAG2,"======= se salio de dataprotocol0 ====");
+            ESP_LOGI(TAG2,"======= se salio de dataprotocol0 ====");
             break;
 		case 1:
-           // ESP_LOGI(TAG2,"======= dataprotocol1 ====");
+           ESP_LOGI(TAG2,"======= dataprotocol1 ====");
 			data = dataprotocol1();
             
 			break;
 		case 2:
-           // ESP_LOGI(TAG2,"======= dataprotocol2 ====");
+           ESP_LOGI(TAG2,"======= dataprotocol2 ====");
 			data = dataprotocol2();
             
 			break;
         case 3:
-           // ESP_LOGI(TAG2,"======= dataprotocol3 ====");
+           ESP_LOGI(TAG2,"======= dataprotocol3 ====");
 			data = dataprotocol3();
             
 			break;
         case 4:
-           // ESP_LOGI(TAG2,"======= dataprotocol4 ====");
+           ESP_LOGI(TAG2,"======= dataprotocol4 ====");
 			data = dataprotocol4();
             
 			break;
 		default:
-            //ESP_LOGI(TAG2,"======= dataprotocol0 default ====");
+            ESP_LOGI(TAG2,"======= dataprotocol0 default ====");
             data = dataprotocol0();
             break;
 	}

@@ -77,10 +77,6 @@ static void event_handler(void* arg, esp_event_base_t event_base,
 void wifi_connect(char * wifi_name,char* pass)
 {
 
-
-    uint8_t wifi_name2[32];
-
-    
     //#define EXAMPLE_ESP_WIFI_SSID     (unsigned char) wifi_name
     //#define EXAMPLE_ESP_WIFI_PASS     (unsigned char) pass
 

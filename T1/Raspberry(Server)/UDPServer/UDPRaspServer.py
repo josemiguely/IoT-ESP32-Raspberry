@@ -49,7 +49,7 @@ def run_server_udp():
 
                     idlog=DatabaseWork2.saveLogs(data,header)
                     DatabaseWork2.dataSave(header,data,idlog)
-                    break
+                    #break
                     
                     
 

@@ -199,6 +199,20 @@ void tcp (char protocol,char transport_layer) {
     int32_t host_ip;
     int32_t wifi_len;
     int32_t pass_len;
+    int32_t discontinous_time;
+
+    err = nvs_get_i32(my_handle, "discontinous_time", &discontinous_time);
+    switch (err) {
+        case ESP_OK:
+            printf("Done\n");
+            printf("discontinous_time = %ld\n", discontinous_time);
+            break;
+        case ESP_ERR_NVS_NOT_FOUND:
+            printf("Discontinous time is not initialized yet!\n");
+            break;
+        default :
+            printf("Error (%s) reading!\n", esp_err_to_name(err));
+    }
     
     
 
@@ -240,32 +254,16 @@ void tcp (char protocol,char transport_layer) {
 
         while (1) {
 
-        // char host_ip_TCP[] = formated_ip;
-        // int addr_family_TCP = 0;
-        // int ip_protocol_TCP = (int)ip_protocol;
-
-        // #if defined(CONFIG_EXAMPLE_IPV4)
-        // struct sockaddr_in dest_addr_TCP;
-        // inet_pton(AF_INET, host_ip_TCP, &dest_addr_TCP.sin_addr);
-        // dest_addr_TCP.sin_family = AF_INET;
-        // dest_addr_TCP.sin_port = htons(PORT+1);
-        // addr_family_TCP = AF_INET;
-        // ip_protocol_TCP = ip_protocol_TCP;
-        // #elif defined(CONFIG_EXAMPLE_SOCKET_IP_INPUT_STDIN)
-        //         struct sockaddr_storage dest_addr_TCP = { 0 };
-        //         ESP_ERROR_CHECK(get_addr_from_stdin(PORT+1, SOCK_STREAM, &ip_protocol_TCP, &addr_family_TCP, &dest_addr_TCP));
-        // #endif
-
-
+        
         //char host_ip_TCP[] = formated_ip;
-        int addr_family_TCP = 0;
+        //int addr_family_TCP = 0;
         int ip_protocol_TCP = (int)id_protocol;
 
         struct sockaddr_in dest_addr_TCP;
         inet_pton(AF_INET, formated_ip, &dest_addr_TCP.sin_addr);
         dest_addr_TCP.sin_family = AF_INET;
         dest_addr_TCP.sin_port = htons(port_tcp);
-        addr_family_TCP = AF_INET;
+        //addr_family_TCP = AF_INET;
         //ESP_ERROR_CHECK(get_addr_from_stdin(port_tcp, SOCK_STREAM, &ip_protocol_TCP, &addr_family_TCP, &dest_addr_TCP));
 
         //Codigo TCP
@@ -291,7 +289,10 @@ void tcp (char protocol,char transport_layer) {
             ESP_LOGE(TAGCLIENT, "Creando mensaje...\n");
             //ESP_LOGE(TAG, "PROTOCOLO QUE LE MANDAMOS A MENSAJE %c...\n",protocol);
             // payload = mensaje(protocol,transport_layer);
-            char protocol = '2';//(char)(id_protocol + 48);
+            
+            
+            char protocol = (char) (id_protocol+48);
+            //char protocol = '2';//(char)(id_protocol + 48);
             printf("protocol = %c\n",protocol);
             payload = mensaje(protocol,'1');
             ESP_LOGE(TAGCLIENT, "Mensaje del protocolo %c creado :D...\n",protocol);
@@ -346,16 +347,18 @@ void tcp (char protocol,char transport_layer) {
                 }
             }
             //el último mensaje es solo un \0 para avisarle al server que terminamos
-            int err = send(sock, "\0", 1, 0);
+            // int err = send(sock, "\0", 1, 0);
+            send(sock, "\0", 1, 0);
 
 
             free(payload);
 
 
-            int discontinous_time = 1*60;
-            if (discontinous_time != 0)  {
-            esp_sleep_enable_timer_wakeup(60*1000000);
-            ESP_LOGI(TAGCLIENT, "Deep sleep de 60 segundos iniciado");
+            //int discontinous_time = 1*60;
+            if (discontinous_time > 0)  {
+            esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
+            // ESP_LOGI(TAGCLIENT, "Deep sleep de 60 segundos iniciado");
+            printf("Iniciando deep sleep de 60*%li segundos iniciado",discontinous_time);
             shutdown(sock, 0);
             close(sock);
             esp_deep_sleep_start();
@@ -405,7 +408,21 @@ void udp (char protocol,char transport_layer){
     int32_t host_ip;
     int32_t wifi_len;
     int32_t pass_len;
-    
+    int32_t discontinous_time;
+
+    err = nvs_get_i32(my_handle, "discontinous_time", &discontinous_time);
+    switch (err) {
+        case ESP_OK:
+            printf("Done\n");
+            printf("discontinous_time = %ld\n", discontinous_time);
+            break;
+        case ESP_ERR_NVS_NOT_FOUND:
+            printf("Discontinous time is not initialized yet!\n");
+            break;
+        default :
+            printf("Error (%s) reading!\n", esp_err_to_name(err));
+    }
+
     
 
     err = nvs_get_i32(my_handle, "port_udp", &port_udp);
@@ -483,7 +500,8 @@ void udp (char protocol,char transport_layer){
         while (1) {
             
             //ESP_LOGE(TAG, "Creando mensaje UDP...\n");
-            char protocol = '2';//(char)(id_protocol + 48);
+            //char protocol = '2';//(char)(id_protocol + 48);
+             char protocol = (char) (id_protocol+48);
             int largo_mensaje= msg_total_length[((int) protocol)-48];
             //ESP_LOGI(TAG,"======= Mensaje Length UDP = %i\n", largo_mensaje);
             
@@ -531,12 +549,33 @@ void udp (char protocol,char transport_layer){
     
     //ESP_LOGE(TAG, "Shutting down socket UDP and restarting...");
     //vTaskDelete(NULL);
-    printf("== TIRANDO SHUTDOWN ==\n");
-    esp_sleep_enable_timer_wakeup(5*1000000);
-    shutdown(sock_UDP, 0);
-    close(sock_UDP);
+    //printf("== TIRANDO SHUTDOWN ==\n");
     
-    esp_deep_sleep_start();
+    // if (discontinous_time != 0)  {
+    //         esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
+    //         // ESP_LOGI(TAGCLIENT, "Deep sleep de 60 segundos iniciado");
+    //         printf("Deep sleep de 60*%i segundos iniciado",discontinous_time);
+    //         shutdown(sock, 0);
+    //         close(sock);
+    //         esp_deep_sleep_start();
+    //         //ESP_LOGI(TAG, "Sale del deep sleep");
+    //         }
+    
+    
+    // if(discontinous_time>0){
+
+    //     // esp_sleep_enable_timer_wakeup(5*1000000);
+    //     esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
+    //     printf("Iniciando deep sleep de 60*%li segundos ",discontinous_time);
+    //     shutdown(sock_UDP, 0);
+    //     close(sock_UDP);
+    //     esp_deep_sleep_start();
+    
+    // }
+        
+        
+        
+            printf("Volviendo al while de UDP OH SI\n");
         }
     }
 }
