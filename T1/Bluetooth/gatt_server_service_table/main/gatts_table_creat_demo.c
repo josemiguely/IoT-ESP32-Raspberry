@@ -181,6 +181,7 @@ static uint8_t char_valueB[12+16];
 static uint8_t char_valueC[12+20];
 static uint8_t char_valueD[12+44];
 static uint32_t discontinous_time = 0;
+static uint32_t status_global = 0;
 
 
 //static uint8_t char_valueC[5]                 = {'C', 'A', 'R', 'C','\0'};
@@ -412,13 +413,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
             printf("READ_EVENT HOLA\n");
             printf("DISCONTINOUS TIME ES === %li  ===",discontinous_time);
 
-            // discontinous_time=1;
-            // if (discontinous_time>0){
-            //     printf("SHUTDOWN de bluetooth discontinuo\n");
-            //     esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
-            //     printf("Iniciando deep sleep de 60*%li segundos\n ",discontinous_time);
-            //     esp_deep_sleep_start();
-            // }
+            
 
             
 
@@ -433,91 +428,22 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
 
                 char* configuration = (char *) malloc(sizeof(char)*param->write.len);
                 
-                // char* wifi_size= (char *) malloc(sizeof(int));
-                // char* ps_size = (char *) malloc(sizeof(int));
-                // char* trash_ptr;
-                // char* wifi_aux = wifi_size;
-                // char* ps_aux = ps_size;
-                //int8_t status;
-                //int8_t id_protocol;
-                //int32_t wifi_size;
-                //int32_t ps_size;
+                
 
 
                 //Imprimos el mensaje que llega y guardamos configuracion
                 for (int i=0;i<param->write.len;i++) {
-                   /* 
-                    //  if(i >=34 && i<38){ // tamaño de wifi
-                    //      ESP_LOGI(GATTS_TABLE_TAG,"wifi tamaño= %x de tipo %i",param->write.value[i],sizeof(param->write.value[i]));
-                    //      configuration[i] = param->write.value[i];
-                    //      *wifi_size = param->write.value[i]; // 0009 
-                    //      ESP_LOGI(GATTS_TABLE_TAG,"wifi tiene %x",*wifi_size);
-                    //      wifi_size++;                   //     |
-                    //  }
-                    //  else if (i >= 38 && i<42){ // tamaño contraseña
-                    //      ESP_LOGI(GATTS_TABLE_TAG,"%i",param->write.value[i]);
-                    //      configuration[i] = param->write.value[i];
-                    //      *ps_size = param->write.value[i];
-                    //      ps_size++;
-                    //  }
-                   
-                    //  else{ // copiar lo demas 
-                   */     
+                        
                     ESP_LOGI(GATTS_TABLE_TAG,"%x",param->write.value[i]);
                     configuration[i] = param->write.value[i];
                     printf("configuration de %i es = %i\n",i,configuration[i]);
                   //  }
                    
-                }/*
-                // char* conf_ptr = configuration;
-                // printf("largo de configuration = %i\n",strlen(configuration));
-                // printf(" configuration actial (*) = %i\n",*conf_ptr);
-                // conf_ptr+=34;
-                // strncpy(wifi_size,conf_ptr,4);
-                // printf(" configuration actial (*) = %i\n",*conf_ptr);
-                // conf_ptr+=4;
-                // strncpy(ps_size,conf_ptr,4); 
-                // printf(" configuration actial (*) = %i\n",*conf_ptr);
-
-                
-                wifi_size = wifi_aux;
-                ps_size = ps_aux;
-
-                for (int i = 0;i<4;i++){
-                    ESP_LOGI(GATTS_TABLE_TAG,"%i",wifi_size[i]); 
-                    ESP_LOGI(GATTS_TABLE_TAG,"%i",wifi_aux[i]); 
                 }
-
-
-                //int ws = strtol(wifi_size[3], NULL,16);
-                //int ps = strtol(ps_size[3], NULL,16);
-               
-                
-                //ESP_LOGI(GATTS_TABLE_TAG,"%s",ps_size);
-                //int ws = atoi(wifi_sizeS);
-               // int ps = atoi(ps_size);
-                //int config_sizes[12] = {1,1,4,4,4,4,4,4,4,4,ws,ps};
-                // recorremos configuration para guardar en la memoria no volatil
-                //char* conf_ptr = configuration;
-                //char* compactc_conf[12];
-                //printf("ws= %i\n",ws);
-                //printf("ps= %i\n",ps);
-                // char* status = (char *)malloc(sizeof(char));
-                // char* id_protocol = (char *)malloc(sizeof(char));
-                // char* acc_sampling =(char *) malloc(sizeof(int));
-                // char* acc_sensibility = (char *)malloc(sizeof(int));
-                // char* gyro_sensibility = (char *)malloc(sizeof(int));
-                // char* BME688_sampling = (char *)malloc(sizeof(int));
-                // char* discontinous_time = (char *)malloc(sizeof(int));
-                // char* port_tcp = (char *)malloc(sizeof(int));
-                // char* port_udp = (char *)malloc(sizeof(int));
-                // char* host_ip = (char *)malloc(sizeof(int));
-                // char* wifi_name =(char *)malloc(sizeof(char)*ws);
-                // char* password = (char *)malloc(sizeof(char)*ps);*/
 
                 int8_t status;
                 int8_t id_protocol;
-                int32_t acc_sampling ;
+                int32_t acc_sampling;
                 int32_t acc_sensibility;
                 int32_t gyro_sensibility;
                 int32_t BME688_sampling;
@@ -531,7 +457,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 //char* wifi_name;
                 //char* password;
 
-                /**/
+                
                 status = configuration[0];
                 id_protocol = configuration[1];
                 printf("status = %i\n",status);
@@ -582,7 +508,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 //memcpy(&wifi_name,&configuration[42],wl);
                 //strncpy(wifi_name,&configuration[42],wl);
                 //strncpy(password,&configuration[n1],pl);
-                /**/
+                
                 
                 //wifi
                 for (int i = 0;i< wl; i++){
@@ -628,20 +554,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 //Escribimos en memoria en no volatil
                 ESP_LOGI(GATTS_TABLE_TAG, "ESCRIBIENDO EN MEMORIA NO VOLATIL");
 
-                /*status = 21;
-                id_protocol = 4;
-                acc_sampling = 100;
-                acc_sensibility= 8;
-                gyro_sensibility= 200;
-                BME688_sampling = 4;
-                discontinous_time = 1;
-                port_tcp = 3000;
-                port_udp = 3001;
-                host_ip = 1902344;
-                wifi_len = 9;
-                pass_len = 22;
-                wifi_name = "Wifibakan" ;
-                password = "AardvarkBadgerHedgehog";*/
+                
                 // Opening non volatile memory
                 esp_err_t err;
                 printf("\n");
@@ -659,12 +572,25 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
 
                 nvs_set_i8(my_handle, "status", status);
                 nvs_set_i8(my_handle, "id_protocol", id_protocol);
-                nvs_set_i32(my_handle, "acc_sampling", acc_sampling);
-                nvs_set_i32(my_handle, "acc_sensibility", acc_sensibility);
-                nvs_set_i32(my_handle, "gyro_sensibiliy", gyro_sensibility);
-                nvs_set_i32(my_handle, "BME688_sampling", BME688_sampling);
-                nvs_set_i32(my_handle, "discontinous_time", discontinous_time);
-                nvs_set_i32(my_handle, "port_tcp", port_tcp);
+                
+                err=nvs_set_i32(my_handle, "acc_sampling", acc_sampling);
+                printf((err != ESP_OK) ? "Failed to set acc_sampling!\n" : "Done setting acc_sampling\n");
+                
+                err=nvs_set_i32(my_handle, "acc_sensibility", acc_sensibility);
+                printf((err != ESP_OK) ? "Failed to set acc_sensibility!\n" : "Done setting acc_sensibility\n");
+                
+                err=nvs_set_i32(my_handle, "gyro_sensibiliy", gyro_sensibility);
+                printf((err != ESP_OK) ? "Failed to set gyro_sensibility!\n" : "Done setting gyro_sensibility\n");
+                
+                err=nvs_set_i32(my_handle, "BME688_sampling", BME688_sampling);
+                printf((err != ESP_OK) ? "Failed to set bme_sampling!\n" : "Done bme sampling\n");
+
+                err=nvs_set_i32(my_handle, "discontinous_time", discontinous_time);
+                printf((err != ESP_OK) ? "Failed to set disconitnous!\n" : "Done setting discontinous\n");
+
+                err=nvs_set_i32(my_handle, "port_tcp", port_tcp);
+                printf((err != ESP_OK) ? "Failed to set port_tcp!\n" : "Done setting port_tcp\n");
+                
                 nvs_set_i32(my_handle, "port_udp", port_udp);
                 nvs_set_i32(my_handle, "host_ip", host_ip);
                 nvs_set_i32(my_handle, "wifi_len", wl);
@@ -673,11 +599,12 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 nvs_set_str(my_handle, "password", password2);
                 nvs_set_i8(my_handle, "config_mode", config_mode);
 
+                
 
                 printf((err != ESP_OK) ? "Failed!\n" : "Done\n");
                 printf("Committing updates in NVS ... ");
                 err = nvs_commit(my_handle);
-                        printf((err != ESP_OK) ? "Failed!\n" : "Done\n");
+                        printf((err != ESP_OK) ? "Failed commiting in NVS!\n" : "Done commiting NVS\n");
 
                 }
                 //Testeo: Recuperemos en memoria no volatil para ver si se escribio
@@ -1005,9 +932,9 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
             
             
             //discontinous_time=1; Esta linea la descomentamos si queremos testear el shutdown
-            if (discontinous_time>0){
-                printf("SHUTDOWN de bluetooth discontinuo\n");
-                esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
+            if (discontinous_time>0 || status_global == 31){
+                printf("SHUTDOWN/Deepsleep de bluetooth discontinuo\n");
+                esp_sleep_enable_timer_wakeup(1*60*1000000);
                 printf("Iniciando deep sleep de 60*%li segundos\n ",discontinous_time);
                 esp_deep_sleep_start();
             }
@@ -1078,7 +1005,7 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
     } while (0);
 }
 
-void bluetooth_main(char protocoln,int discontinous)
+void bluetooth_main(char protocoln,int discontinous,int status)
 {
     esp_err_t ret;
 
@@ -1087,6 +1014,13 @@ void bluetooth_main(char protocoln,int discontinous)
     
     if (discontinous>0){
         discontinous_time = discontinous;
+    }
+
+    printf("STATUS BLUETOOTH = %i",status);
+
+    if (status==31){
+        printf("es discontinous el bluetooth");
+        status_global=31;
     }
 
     if(protocoln!='9'){

@@ -3,7 +3,7 @@ from interface2 import Ui_Dialog
 from PyQt5 import QtCore,QtGui,QtWidgets
 from PyQt5.QtCore import QTimer,Qt
 import datetime
-from PlotData import getFromData1,getFromData2
+from PlotData import getFromData1,getFromData2,getIDdevices
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 from string import punctuation
@@ -35,6 +35,7 @@ class GUIController:
         self.ui.plot_3_stop_btn.clicked.connect(self.stop_data3)
         self.ui.status_select.activated.connect(self.activated)
         self.ui.config_mode_select.activated.connect(self.consistencia)
+        self.ui.refresh_d.clicked.connect(self.refresh)
 
 
 
@@ -92,32 +93,57 @@ class GUIController:
         #         self.ui.status_select.addItem("Actualización via BLE")
                  
                 
-                    
+    def refresh(self):
+        elements = getIDdevices()
+        print(elements)
+        elements = list(map(str,elements))
+
+        self.ui.plot_1_device_name_select.clear()
+        self.ui.plot_1_device_name_select.addItems(elements)  
+
+        self.ui.plot_2_device_name_select.clear()
+        self.ui.plot_2_device_name_select.addItems(elements)  
+
+        self.ui.plot_3_device_name_select.clear()
+        self.ui.plot_3_device_name_select.addItems(elements)  
+
     def display_data(self,grafico,select_var,device_name_select):
         grafico.clear()
         #text = self.ui.plot_1_select_var.currentText()
         text = select_var.currentText()
         dispositivo = device_name_select.currentText()
-        if (text == "Racc_x" or text == "Racc_y" or text == "Racc_z"):
-            data = getFromData2(f"{text,dispositivo}") 
+        if (text == "Racc_x" or text == "Racc_y" or text == "Racc_z"
+        or text == "Rgyr_x" or text == "Rgyr_y" or text == "Rgyr_z"):
+            data = getFromData2(text,dispositivo)
+            #print(data)
+            for i in range(len(data)):
+                tiempo2 = []
+                data2 = []
+                for j in range(len(data[i])):
+                    tiempo2.append(j) 
+                grafico.plot(tiempo2, data[i])
         else:
-            data = getFromData1(f"{text,dispositivo}") 
-       
-        tiempo = []
-        for i in range(1,len(data)+1):
-            tiempo.append(i)
+            data = getFromData1(text,dispositivo)
+            #print(data) 
+            tiempo = []
+            for i in range(len(data)):
+                tiempo.append(i)
+            grafico.plot(tiempo, data)
         # self.graphWidget = pg.PlotWidget()
         # self.setCentralWidget(self.graphWidget)
         #self.ui.plot1.setBackground('w')
-        grafico.plot(tiempo, data)
+       # grafico.plot(tiempo, data)
 
     def llamar_a_display1(self):
+        
         cont.display_data(self.ui.plot_1,self.ui.plot_1_select_var,self.ui.plot_1_device_name_select)
 
     def llamar_a_display2(self):
+        
         cont.display_data(self.ui.plot_2,self.ui.plot_2_select_var,self.ui.plot_2_device_name_select)
 
     def llamar_a_display3(self):
+        
         cont.display_data(self.ui.plot_3,self.ui.plot_3_select_var,self.ui.plot_3_device_name_select)    
 
 
@@ -181,4 +207,5 @@ if __name__ == "__main__":
     cont.setSignals()
     cont.disableButton()
     cont.consistencia()
+    cont.refresh()
     sys.exit(app.exec_())

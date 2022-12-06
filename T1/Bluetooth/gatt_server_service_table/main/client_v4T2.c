@@ -82,107 +82,21 @@ void tcp_udp_client(void) //Se deberia llamar tcp_udp_client()
 
 
 
-//    printf("TCP_UDP_CLIENT\n");
 
-//     char rx_buffer[128];
-//     char host_ip[] = HOST_IP_ADDR;
-//     int addr_family = 0;
-//     int ip_protocol = 0;
-
-    
-    
-    
-// #if defined(CONFIG_EXAMPLE_IPV4)
-//         struct sockaddr_in dest_addr;
-//         inet_pton(AF_INET, host_ip, &dest_addr.sin_addr);
-//         dest_addr.sin_family = AF_INET;
-//         dest_addr.sin_port = htons(PORT);
-//         addr_family = AF_INET;
-//         ip_protocol = IPPROTO_IP;
-// #elif defined(CONFIG_EXAMPLE_SOCKET_IP_INPUT_STDIN)
-//         struct sockaddr_storage dest_addr = { 0 };
-//         ESP_ERROR_CHECK(get_addr_from_stdin(PORT, SOCK_STREAM, &ip_protocol, &addr_family, &dest_addr));
-// #endif
-
-
-//         //Mandamos a pedir a rasbperry configuración inicial...
-    
-//         //ESP_LOGI(TAG, "=====Creando socket de main...====="); 
-    
-//         int sock_main =  socket(addr_family, SOCK_STREAM, ip_protocol);
-//         if (sock_main < 0) {
-//             ESP_LOGE(TAG, "Unable to create main socket: errno %d", errno);
-//             // break;
-//         }
-//         //ESP_LOGI(TAG, "=====Main socket created, connecting to %s:%d=====", host_ip, PORT); //Corregir host_ip, PORT si no funciona
-
-        
-//         int err1 = connect(sock_main, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-//         if (err1 != 0) {
-//             ESP_LOGE(TAG, "=====Main socket unable to connect: errno %d======", errno);
-//             // break;
-//         }
-//         ESP_LOGI(TAG, "=====Main socket Successfully connected=====");
-//         //uint64_t timer = 60;
-
-
-//         char* solicitud="\0";
-//         //Enviamos un 0 para pedirle la configuracion al Raspberry
-//         ESP_LOGI(TAG, "=====Enviando mensaje de solicitud de configuracion a Raspberry=====");
-//         int err2 = send(sock_main, solicitud, 1, 0);
-//         ESP_LOGI(TAG, "=====Se envio mensaje de solicitud = %s, de configuracion a Raspberry=====",solicitud);
-
-//         //Recuperamos configuracion de Raspberry
-//         int len = recv(sock_main, rx_buffer, sizeof(rx_buffer) - 1, 0);
-//         ESP_LOGI(TAG, "=====Recupero mensaje configuracion de Raspberry=====");
-
-//         rx_buffer[len] = 0;
-//         char protocol =  rx_buffer[0];
-//         char transport_layer = rx_buffer[1];
-//         //ESP_LOGI(TAG, "=====Se recibio como protocol %c=====",protocol);
-//         //ESP_LOGI(TAG, "=====Se recibio como transport_layer %c=====",transport_layer);
-
-//         //ESP_LOGI(TAG, "=====Cerrando socket de main...====="); 
-//         shutdown(sock_main, 0);
-//         close(sock_main);
-//         //ESP_LOGI(TAG, "=====Socket de main cerrado...====="); 
-
-//         if (transport_layer == '0'){ 
-//         tcp(protocol,transport_layer);
-//     }
-
-
-
-//     else if (transport_layer == '1'){       
-//         udp(protocol,transport_layer);
-//     }
-//     else
-//     {
-//         ESP_LOGI(TAG, "===== No recibio transport layer ====="); 
-//     }
     
 }
 
 
 
-void tcp (char protocol,char transport_layer) {
+void tcp (char status,char transport_layer) {
 
 
-    //     #if defined(CONFIG_EXAMPLE_IPV4)
-    //     struct sockaddr_in dest_addr;
-    //     inet_pton(AF_INET, host_ip, &dest_addr.sin_addr);
-    //     dest_addr.sin_family = AF_INET;
-    //     dest_addr.sin_port = htons(PORT);
-    //     addr_family = AF_INET;
-    //     ip_protocol = IPPROTO_IP;
-    //     #elif defined(CONFIG_EXAMPLE_SOCKET_IP_INPUT_STDIN)
-    //             struct sockaddr_storage dest_addr = { 0 };
-    //             ESP_ERROR_CHECK(get_addr_from_stdin(PORT, SOCK_STREAM, &ip_protocol, &addr_family, &dest_addr));
-    //     #endif
+   
 
 
 
     printf("TCP EJECUTADO\n");
+    printf("STATUS QUE ENTRO %c \n",status);
     nvs_handle_t my_handle;
     esp_err_t err = nvs_flash_init();
     
@@ -353,12 +267,14 @@ void tcp (char protocol,char transport_layer) {
 
             free(payload);
 
-
+            printf("AHORA VEREMOS SI SE HACE DEEPSLEEP O NO\n");
             //int discontinous_time = 1*60;
-            if (discontinous_time > 0)  {
-            esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
+            if (discontinous_time > 0 || status=='2')  {
+            printf("Iniciando deep sleep de 60*%li segundos iniciado\n",discontinous_time);
+            //esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
+            esp_sleep_enable_timer_wakeup(1*60*1000000);
             // ESP_LOGI(TAGCLIENT, "Deep sleep de 60 segundos iniciado");
-            printf("Iniciando deep sleep de 60*%li segundos iniciado",discontinous_time);
+            
             shutdown(sock, 0);
             close(sock);
             esp_deep_sleep_start();
@@ -373,6 +289,8 @@ void tcp (char protocol,char transport_layer) {
             ESP_LOGE(TAGCLIENT, "Shutting down socket and restarting...");
             shutdown(sock, 0);
             close(sock);
+            printf("-----ESPEREMOS ALGUNOS SEGUNDOS PARA ANTES----");
+            vTaskDelay(30000 / portTICK_PERIOD_MS);
         }
 
        }
@@ -540,42 +458,12 @@ void udp (char protocol,char transport_layer){
             free(payload);
       
             //ESP_LOGI(TAG, "Message UDP sent");
-            vTaskDelay(10000 / portTICK_PERIOD_MS);
+            vTaskDelay(20000 / portTICK_PERIOD_MS);
             break;
         }
 
-       
-   // }
-    
-    //ESP_LOGE(TAG, "Shutting down socket UDP and restarting...");
-    //vTaskDelete(NULL);
-    //printf("== TIRANDO SHUTDOWN ==\n");
-    
-    // if (discontinous_time != 0)  {
-    //         esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
-    //         // ESP_LOGI(TAGCLIENT, "Deep sleep de 60 segundos iniciado");
-    //         printf("Deep sleep de 60*%i segundos iniciado",discontinous_time);
-    //         shutdown(sock, 0);
-    //         close(sock);
-    //         esp_deep_sleep_start();
-    //         //ESP_LOGI(TAG, "Sale del deep sleep");
-    //         }
-    
-    
-    // if(discontinous_time>0){
-
-    //     // esp_sleep_enable_timer_wakeup(5*1000000);
-    //     esp_sleep_enable_timer_wakeup(discontinous_time*60*1000000);
-    //     printf("Iniciando deep sleep de 60*%li segundos ",discontinous_time);
-    //     shutdown(sock_UDP, 0);
-    //     close(sock_UDP);
-    //     esp_deep_sleep_start();
-    
-    // }
-        
-        
-        
-            printf("Volviendo al while de UDP OH SI\n");
+               
+            printf("----Volviendo al while de UDP OH SI\n-----");
         }
     }
 }

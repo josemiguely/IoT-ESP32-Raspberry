@@ -692,10 +692,17 @@ class Ui_Dialog(object):
         self.plot_3_device_name_label.setFont(font)
         self.plot_3_device_name_label.setStyleSheet("color: rgb(0, 0, 0);")
         self.plot_3_device_name_label.setObjectName("plot_3_device_name_label")
+        self.refresh_d = QtWidgets.QPushButton(self.tab_2)
+        self.refresh_d.setGeometry(QtCore.QRect(390, 20, 120, 30))
+        self.refresh_d.setMinimumSize(QtCore.QSize(120, 30))
+        self.refresh_d.setStyleSheet("color: rgb(213, 213, 213);\n"
+"background-color: rgb(0, 115, 0);\n"
+"")
+        self.refresh_d.setObjectName("refresh_d")
         self.tabWidget.addTab(self.tab_2, "")
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -830,6 +837,7 @@ class Ui_Dialog(object):
         self.plot_1_device_name_label.setText(_translate("Dialog", "Dispositivo"))
         self.plot_2_device_name_label.setText(_translate("Dialog", "Dispositivo"))
         self.plot_3_device_name_label.setText(_translate("Dialog", "Dispositivo"))
+        self.refresh_d.setText(_translate("Dialog", "Actualizar dispositivos"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", "Visualizacion"))
 from pyqtgraph import PlotWidget
 

@@ -12,12 +12,28 @@ def getFromData1(data,dispositivo):
         print(e)
         return 
 
-    try:
-            sqlite_select = f"""
-            SELECT {data} FROM Data_1 where id_device = {dispositivo};"""
+    try:    
+            '''getlogid = f"""
+            SELECT Id_device 
+            FROM Log WHERE configuration_Id_device = {dispositivo};"""
             ## Poner la configuracion segun el parser
+            cursor.execute(getlogid)
+            result = list(cursor.fetchall())
+            fun1 = lambda x: x != None
+            fun2 = lambda x: x[0]
+            r1 =  list(filter(fun1,list(map(fun2,result))))
+            print(r1)
+            str_sql = "OR Log_Id_device = ? "*(len(r1)-1)
+            ques = " ? "+",? "*(len(r1)-1)
+            v = str(tuple(map(str,r1)))'''
+            sqlite_select = f"""
+            SELECT {data} FROM Data_1;""" #WHERE Log_Id_device =? """+str_sql+" "+v+";"
+
+            ## Poner la configuracion segun el parser
+            #print(sqlite_select,*r1)
             cursor.execute(sqlite_select)
             result = list(cursor.fetchall())
+           # print ("result",result)
             fun1 = lambda x: x != None
             fun2 = lambda x: x[0]
             r =  list(filter(fun1,list(map(fun2,result))))
@@ -44,8 +60,22 @@ def getFromData2(data,dispositivo):
         return 
 
     try:
+
+            '''getlogid = f"""
+            SELECT Id_device 
+            FROM Log WHERE configuration_Id_device = {dispositivo};"""
+            ## Poner la configuracion segun el parser
+            cursor.execute(getlogid)
+            result = list(cursor.fetchall())
+            fun1 = lambda x: x != None
+            fun2 = lambda x: x[0]
+            print(result)
+            r1 =  list(filter(fun1,list(map(fun2,result))))
+            print(r1)
+            str_sql = "OR Log_Id_device = ? "*(len(r1)-1)
+            ques = " ?"+",? "*(len(r1)-1)'''
             sqlite_select = f"""
-            SELECT {data} FROM Data_2 where id_device = {dispositivo};"""
+            SELECT {data} FROM Data_2"""# WHERE Log_Id_device =? """+str_sql+"VALUES("+ques+");"
             ## Poner la configuracion segun el parser
             cursor.execute(sqlite_select)
             result = list(cursor.fetchall())
@@ -64,6 +94,37 @@ def getFromData2(data,dispositivo):
             if sqliteConnection:
                 sqliteConnection.close()
 
+
+def getIDdevices():
+    try:
+        sqliteConnection = sql.connect('./Raspberry(Server)/Database/DBakan.sqlite')
+        #sqliteConnection = sql.connect('./DBakan.sqlite')
+        cursor = sqliteConnection.cursor()
+    except Exception as e:
+        print("Error en getIDdevices")
+        print(e)
+        return 
+
+    try:
+
+           
+
+            sqlite_select = f"""
+            SELECT Id_device FROM configuration;"""
+            ## Poner la configuracion segun el parser
+            cursor.execute(sqlite_select)
+            result = list(cursor.fetchall())
+            fun1 = lambda x: x != None
+            fun2 = lambda x: x[0]
+            r =  list(filter(fun1,list(map(fun2,result))))
+            sqliteConnection.close()
+            return r
+     
+    except sql.Error as error:
+            print(f"Error al obtener los ids",error)
+    finally:
+            if sqliteConnection:
+                sqliteConnection.close()
 
 #print(getFromData1("Press"))
 #print(getFromData2("Rgyr_x"))

@@ -68,7 +68,7 @@ void app_main(void) {
         nvs_close(my_handle);
         
 
-        bluetooth_main('9',0); //Se le pasa un protocolo que no existe y discontinous time = 0.
+        bluetooth_main('9',0,-1); //Se le pasa un protocolo que no existe y discontinous time = 0.
     
         printf("Bluetooth main ya fue ejecutado\n");
         
@@ -105,7 +105,7 @@ void app_main(void) {
 
         if (status == 0){
             printf("Configuracion por bluetooth \n");
-            bluetooth_main('9',0); //Se le pasa un protocolo que no existe y discontinous time = 0.
+            bluetooth_main('9',0,status); //Se le pasa un protocolo que no existe y discontinous time = 0.
         
         }
     
@@ -125,7 +125,7 @@ void app_main(void) {
 
         else if (status == 22){
             printf("Conexion TCP Discontinua\n");
-            tcp('a','1');//Creo que el primer parmaetro es innecesario dado que adentro de tcp se recuepra el protocolo
+            tcp('2','1');//Creo que el primer parmaetro es innecesario dado que adentro de tcp se recuepra el protocolo
             
         }
 
@@ -136,12 +136,12 @@ void app_main(void) {
 
         else if (status == 30){
             printf("BLE Continua\n");
-            bluetooth_main(id_protocol,discontinous_time);
+            bluetooth_main(id_protocol,discontinous_time,status);
         }
 
         else if (status == 31){
             printf("BLE Discontinua\n");
-            bluetooth_main(id_protocol,discontinous_time);
+            bluetooth_main(id_protocol,discontinous_time,status);
             printf("--------AFUERA BLE DISCONTINUA AFUERA------\n");
         }
 
